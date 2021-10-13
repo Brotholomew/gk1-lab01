@@ -1,0 +1,16 @@
+D:\Sync\Synced\Programy\GK1\lab01\obj\Debug\netcoreapp3.1\lab01.csprojAssemblyReference.cache
+D:\Sync\Synced\Programy\GK1\lab01\obj\Debug\netcoreapp3.1\lab01.mainForm.resources
+D:\Sync\Synced\Programy\GK1\lab01\obj\Debug\netcoreapp3.1\lab01.csproj.GenerateResource.cache
+D:\Sync\Synced\Programy\GK1\lab01\obj\Debug\netcoreapp3.1\lab01.AssemblyInfoInputs.cache
+D:\Sync\Synced\Programy\GK1\lab01\obj\Debug\netcoreapp3.1\lab01.AssemblyInfo.cs
+D:\Sync\Synced\Programy\GK1\lab01\obj\Debug\netcoreapp3.1\lab01.csproj.CoreCompileInputs.cache
+D:\Sync\Synced\Programy\GK1\lab01\bin\Debug\netcoreapp3.1\lab01.exe
+D:\Sync\Synced\Programy\GK1\lab01\bin\Debug\netcoreapp3.1\lab01.deps.json
+D:\Sync\Synced\Programy\GK1\lab01\bin\Debug\netcoreapp3.1\lab01.runtimeconfig.json
+D:\Sync\Synced\Programy\GK1\lab01\bin\Debug\netcoreapp3.1\lab01.runtimeconfig.dev.json
+D:\Sync\Synced\Programy\GK1\lab01\bin\Debug\netcoreapp3.1\lab01.dll
+D:\Sync\Synced\Programy\GK1\lab01\bin\Debug\netcoreapp3.1\lab01.pdb
+D:\Sync\Synced\Programy\GK1\lab01\obj\Debug\netcoreapp3.1\lab01.dll
+D:\Sync\Synced\Programy\GK1\lab01\obj\Debug\netcoreapp3.1\lab01.pdb
+D:\Sync\Synced\Programy\GK1\lab01\obj\Debug\netcoreapp3.1\lab01.genruntimeconfig.cache
+D:\Sync\Synced\Programy\GK1\lab01\obj\Debug\netcoreapp3.1\lab01.Properties.Resources.resources

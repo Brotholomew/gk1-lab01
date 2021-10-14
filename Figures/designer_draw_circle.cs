@@ -7,13 +7,40 @@ namespace lab01
 {
     public static partial class designer
     {
-        public static void DrawCircle(Point _center, int radius)
-        {
-            vertex center = designer.DrawVertex(_center, Brushes.Black);
-            designer._Canvas.RegisterVertex(center);
+        public static vertex FirstVertex = null;
 
-            circle c = designer._DrawCircle(_center, radius, Brushes.Black);
-            designer._Canvas.RegisterDrawable(c);
+        public static void DrawCircle(Point p)
+        {
+            if (designer.State == PrintingStates.Off) 
+            {
+                designer.FirstVertex = designer.DrawVertex(p, Brushes.Black);
+                designer._Canvas.RegisterVertex(designer.FirstVertex);
+
+                designer.State = PrintingStates.FollowMouse;
+            } 
+            else
+            {
+                int radius = (int)designer.Distance(p, designer.FirstVertex.Pixels[0]);
+                designer._Canvas.ErasePreview();
+
+                if (designer.LastPoint == designer.NullPoint)
+                {
+                    // FollowMouse
+                    
+                    designer._DrawCircle(designer.FirstVertex.Pixels[0], radius, Brushes.Black);
+                }
+                else
+                {
+                    circle c = null;
+                    designer._Canvas.PrintToMain(() => c = designer._DrawCircle(designer.FirstVertex.Pixels[0], radius, Brushes.Black));
+                    designer._Canvas.RegisterDrawable(c);
+
+                    designer.FirstVertex = null;
+                    designer.LastPoint = designer.NullPoint;
+                }
+            }
+
+            printer.Erase();
         }
 
         private static circle _DrawCircle(Point center, int radius, Brush b)

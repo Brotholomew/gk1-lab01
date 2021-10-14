@@ -62,15 +62,16 @@ namespace lab01
 
         public void Reprint()
         {
-            List<Point> temp = new List<Point>();
+            this.PrintToMain(() =>
+            {
+                List<Point> temp = new List<Point>();
 
-            foreach (var d in this._DrawablesHeap)
-                temp.AddRange(d.Pixels);
+                foreach (var d in this._DrawablesHeap)
+                    printer.PutPixels(d.Pixels, d.Brush);
 
-            printer.PutPixels(temp, Brushes.Black);
-
-            foreach (var v in this._VerticesHeap)
-                this.PrintVertex(v);
+                foreach (var v in this._VerticesHeap)
+                    this.PrintVertex(v);
+            });
         }
 
         public void PrintToMain(Action a)
@@ -86,9 +87,6 @@ namespace lab01
 
         public void ErasePreview()
         {
-            //printer.Erase();
-            //this.Reprint();
-
             this._PreviewGraphics.Clear(Color.Transparent);
         }
 
@@ -100,7 +98,8 @@ namespace lab01
                 this._DrawablesHeap.Remove(d);
             }
 
-            this.ErasePreview();
+            this.Reprint();
+            printer.Erase();
         }
 
         public void EraseVertex(vertex v)
@@ -108,7 +107,8 @@ namespace lab01
             this._VertexMap[v.Pixels[0]].Remove(v);
             this._VerticesHeap.Remove(v);
 
-            this.ErasePreview();
+            this.Reprint();
+            printer.Erase();
         }
 
         public void DeregisterDrawable(drawable d)

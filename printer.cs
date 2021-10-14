@@ -34,8 +34,6 @@ namespace lab01
 
         public static void SetGraphics(Graphics gx) => printer.Canvas = gx;
 
-        public static void UpdateGraphics() => printer.Canvas = printer.CanvasWrapper.CreateGraphics();
-
         public static void PutPixel(Point p, Brush brush)
         {
             printer.Canvas.FillRectangle(brush, p.X, p.Y, printer.PixelSize, printer.PixelSize);
@@ -51,10 +49,6 @@ namespace lab01
         }
 
         public static void PutVertex(Point p, Brush brush) => printer.Canvas.FillEllipse(brush, p.X - printer.VertexRadius, p.Y - printer.VertexRadius, 2 * printer.VertexRadius + 1, 2 * printer.VertexRadius + 1);
-
-        public static Image SaveState() => printer.CanvasWrapper.Image;
-
-        public static void RestoreState(Image img) => printer.CanvasWrapper.Image = img;
 
         public static void Erase()
         {

@@ -10,10 +10,10 @@ namespace lab01
         public static void DrawCircle(Point _center, int radius)
         {
             vertex center = designer.DrawVertex(_center, Brushes.Black);
-            designer.Canvas.RegisterVertex(center);
+            designer._Canvas.RegisterVertex(center);
 
             circle c = designer._DrawCircle(_center, radius, Brushes.Black);
-            designer.Canvas.RegisterDrawable(c);
+            designer._Canvas.RegisterDrawable(c);
         }
 
         private static circle _DrawCircle(Point center, int radius, Brush b)

@@ -17,25 +17,34 @@ namespace lab01
         private static Point LastPoint = designer.NullPoint;
         private static Point FirstPoint = designer.NullPoint;
 
-        private static Image LastImage = null;
         private static line LastLine = null;
         private static List<drawable> _Lines = new List<drawable>();
         private static List<vertex> _Vertices = new List<vertex>();
 
-        public static Canvas Canvas = new Canvas();
+        private static Canvas _Canvas = null;
 
         public static void Initialize()
         {
+            designer._Canvas = new Canvas();
         }
 
         public static void FollowMouse(MouseEventArgs e)
         {
             if (designer.State == PrintingStates.FollowMouse)
             {
-                if (designer.LastLine != null) designer.Canvas.ErasePreview();
+                if (designer.LastLine != null) designer._Canvas.ErasePreview();
 
                 designer.LastLine = designer.DrawLine(LastPoint, e.Location, Brushes.Black);
+                printer.Erase();
             }
+        }
+
+        public static Canvas Canvas { 
+            get 
+            {
+                if (designer._Canvas == null) return null;
+                return designer._Canvas;
+            } 
         } 
 
         private static double Distance(Point start, Point end) => Math.Sqrt(Math.Pow(start.X - end.X, 2) + Math.Pow(start.Y - end.Y, 2));

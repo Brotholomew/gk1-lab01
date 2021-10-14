@@ -31,16 +31,16 @@ namespace lab01
             {
                 // ostatni punkt
                 if (designer._Lines.Count > 0 && 
-                    designer.Distance(designer.LastPoint, designer.FirstPoint) <= printer.VertexRadius)
+                    designer.Distance(e.Location, designer.FirstPoint) <= printer.VertexRadius)
                 {
-                    designer.Canvas.ErasePreview();
                     designer.State = PrintingStates.Off;
 
                     line l = designer.DrawLine(designer.LastPoint, designer.FirstPoint, Brushes.Black);
-                    designer.Canvas.DeregisterDrawables(designer._Lines);
-
+                    
                     designer._Lines.Add(l);
+                    designer._Canvas.DeregisterDrawables(designer._Lines);
                     designer._Vertices[0].Brush = designer.VertexBrush;
+                    designer._Canvas.PrintVertex(designer._Vertices[0]);
 
                     poly p = new poly(designer._Lines, designer._Vertices);
 
@@ -49,22 +49,25 @@ namespace lab01
                     designer.LastPoint = designer.NullPoint;
                     designer.FirstPoint = designer.NullPoint;
 
-                    designer.Canvas.RegisterDrawable(p);
-                    Canvas.Reprint();
+                    designer._Canvas.RegisterDrawable(p);
+                    designer._Canvas.PrintDrawable(p);
+                    designer._Canvas.ErasePreview();
                 }
                 else
                 {
                     // kolejny punkt
                     vertex v = designer.DrawVertex(e.Location, designer.VertexBrush);
                     designer._Vertices.Add(v);
-
-                    line l = designer.DrawLine(designer.LastPoint, e.Location, Brushes.Black);
-                    designer.Canvas.RegisterDrawable(l);
+                    line l = null;
+                    designer.Canvas.PrintToMain(() => l = designer.DrawLine(designer.LastPoint, e.Location, Brushes.Black));
+                    designer._Canvas.RegisterDrawable(l);
                     designer._Lines.Add(l);
                 }
 
                 designer.LastPoint = e.Location;
             }
+
+            printer.Erase();
         }
     }
 }

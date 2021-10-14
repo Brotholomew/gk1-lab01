@@ -13,6 +13,27 @@ namespace lab01
         private Dictionary<Point, List<drawable>> _VertexMap = new Dictionary<Point, List<drawable>>();
         private List<vertex> _VerticesHeap = new List<vertex>();
 
+        private Bitmap _MainBitmap = new Bitmap(printer.Width, printer.Height);
+        private Bitmap _Preview = new Bitmap(printer.Width, printer.Height);
+
+        public Bitmap MainBitmap { get => this._MainBitmap; }
+        public Bitmap Preview { get => this._Preview; }
+
+        private Graphics _MainGraphics;
+        private Graphics _PreviewGraphics;
+
+        public Graphics MainGraphics { get => this._MainGraphics; }
+        public Graphics PreviewGraphics { get => this._PreviewGraphics; }
+
+        public Canvas()
+        {
+            this._MainGraphics = Graphics.FromImage(this._MainBitmap);
+            this._PreviewGraphics = Graphics.FromImage(this._Preview);
+
+            this._MainGraphics.Clear(Color.White);
+            this._PreviewGraphics.Clear(Color.Transparent);
+        }
+
         private void InitializePixel(Point p, Dictionary<Point, List<drawable>> map, drawable d)
         {
             if (!map.ContainsKey(p))
@@ -52,14 +73,23 @@ namespace lab01
                 this.PrintVertex(v);
         }
 
-        public void PrintDrawable(drawable d) => printer.PutPixels(d.Pixels, d.Brush);
+        public void PrintToMain(Action a)
+        {
+            printer.SetGraphics(this._MainGraphics);
+            a.Invoke();
+            printer.SetGraphics(this._PreviewGraphics);
+        }
 
-        public void PrintVertex(vertex v) => printer.PutVertex(v.Pixels[0], v.Brush);
+        public void PrintDrawable(drawable d) => this.PrintToMain(() => printer.PutPixels(d.Pixels, d.Brush));
+
+        public void PrintVertex(vertex v) => this.PrintToMain(() => printer.PutVertex(v.Pixels[0], v.Brush));
 
         public void ErasePreview()
         {
-            printer.Erase();
-            this.Reprint();
+            //printer.Erase();
+            //this.Reprint();
+
+            this._PreviewGraphics.Clear(Color.Transparent);
         }
 
         public void EraseDrawable(drawable d)
@@ -84,7 +114,7 @@ namespace lab01
         public void DeregisterDrawable(drawable d)
         {
             foreach (var pixel in d.Pixels)
-                this._DrawableMap[pixel].Remove(d);
+                if (this._DrawableMap.ContainsKey(pixel)) this._DrawableMap[pixel].Remove(d);
 
             this._DrawablesHeap.Remove(d);
         }

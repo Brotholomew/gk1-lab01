@@ -9,9 +9,9 @@ namespace lab01
     {
         public static vertex DrawVertex(Point pos, Brush brush)
         {
-            printer.PutVertex(pos, brush);
             vertex v = new vertex(pos, new List<Point> { pos }, brush);
-            designer.Canvas.RegisterVertex(v);
+            designer._Canvas.PrintVertex(v);
+            designer._Canvas.RegisterVertex(v);
             return v;
         }
     }

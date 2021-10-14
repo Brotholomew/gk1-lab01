@@ -24,7 +24,7 @@ namespace lab01
         public static void Initialize(PictureBox _canvas)
         {
             printer.CanvasWrapper = _canvas;
-            printer.Canvas = printer.CanvasWrapper.CreateGraphics();
+            // printer.Canvas = printer.CanvasWrapper.CreateGraphics();
 
             printer.Height = printer.CanvasWrapper.Height;
             printer.Width = printer.CanvasWrapper.Width;
@@ -33,6 +33,7 @@ namespace lab01
         }
 
         public static void SetGraphics(Graphics gx) => printer.Canvas = gx;
+
         public static void UpdateGraphics() => printer.Canvas = printer.CanvasWrapper.CreateGraphics();
 
         public static void PutPixel(Point p, Brush brush)

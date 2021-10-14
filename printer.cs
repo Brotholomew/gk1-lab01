@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace lab01
 {
@@ -10,8 +11,10 @@ namespace lab01
     {
         private static PictureBox CanvasWrapper;
         private static Graphics Canvas;
-        private static SolidBrush Brush;
         private static List<Point> _Buffer;
+
+        public static readonly int PixelSize = 1;
+        public static readonly int VertexRadius = 3;
 
         public static int Width { get; set; }
         public static int Height { get; set; }
@@ -26,27 +29,36 @@ namespace lab01
             printer.Height = printer.CanvasWrapper.Height;
             printer.Width = printer.CanvasWrapper.Width;
 
-            printer.Brush = new SolidBrush(Color.Black);
-
             printer._Buffer = new List<Point>();
         }
-        public static void PutPixel(int x, int y, Color color)
+
+        public static void SetGraphics(Graphics gx) => printer.Canvas = gx;
+        public static void UpdateGraphics() => printer.Canvas = printer.CanvasWrapper.CreateGraphics();
+
+        public static void PutPixel(Point p, Brush brush)
         {
-            printer.Brush.Color = color;
-            Canvas.FillRectangle(printer.Brush, x, y, 1, 1);
-            printer._Buffer.Add(new Point(x, y));
+            printer.Canvas.FillRectangle(brush, p.X, p.Y, printer.PixelSize, printer.PixelSize);
+            printer._Buffer.Add(new Point(p.X, p.Y));
         }
 
-        public static void ErasePixel(int x, int y)
-        {
-            printer.Brush.Color = Color.White;
-            Canvas.FillRectangle(printer.Brush, x, y, 1, 1);
-        }
+        public static void PutPixel(int x, int y, Brush brush) => printer.PutPixel(new Point(x, y), brush);
 
-        public static void ErasePixels(List<Point> pixels)
+        public static void PutPixels(List<Point> pixels, Brush brush)
         {
             foreach (var pixel in pixels)
-                printer.ErasePixel(pixel.X, pixel.Y);
+               printer.PutPixel(pixel, brush);
+        }
+
+        public static void PutVertex(Point p, Brush brush) => printer.Canvas.FillEllipse(brush, p.X - printer.VertexRadius, p.Y - printer.VertexRadius, 2 * printer.VertexRadius + 1, 2 * printer.VertexRadius + 1);
+
+        public static Image SaveState() => printer.CanvasWrapper.Image;
+
+        public static void RestoreState(Image img) => printer.CanvasWrapper.Image = img;
+
+        public static void Erase()
+        {
+            printer.CanvasWrapper.Invalidate();
+            printer.CanvasWrapper.Update();
         }
     }
 }

@@ -10,12 +10,13 @@ namespace lab01
         protected List<Point> _Pixels;
 
         public virtual List<Point> Pixels { get => this._Pixels; }
-        public Color Color { get; set; }
+        public virtual Brush Brush { get; set; }
+        public virtual bool IsDummy => false;
 
-        public drawable(List<Point> _pixels, Color _color)  
+        public drawable(List<Point> _pixels, Brush _brush)  
         {
             this._Pixels = _pixels;
-            this.Color = Color;
+            this.Brush = _brush;
         }
     }
 
@@ -23,7 +24,7 @@ namespace lab01
     {
         private List<drawable> _Drawables = new List<drawable>();
         private Point p;
-        public vertex(Point _p, List<Point> _pixels, Color _color) : base(_pixels, _color)
+        public vertex(Point _p, List<Point> _pixels, Brush _brush) : base(_pixels, _brush)
         {
             this.p = new Point(_p.X, _p.Y);
         }
@@ -37,7 +38,7 @@ namespace lab01
     {
         private Point _Start;
         private Point _End;
-        public line(Point _start, Point _end, List<Point> _pixels, Color _color) : base(_pixels, _color)
+        public line(Point _start, Point _end, List<Point> _pixels, Brush _brush) : base(_pixels, _brush)
         {
             this._Start = _start;
             this._End = _end;
@@ -48,7 +49,7 @@ namespace lab01
     {
         private Point center;
         private int radius;
-        public circle(Point _center, int _radius, List<Point> _pixels, Color _color) : base(_pixels, _color)
+        public circle(Point _center, int _radius, List<Point> _pixels, Brush _brush) : base(_pixels, _brush)
         {
             this.center = _center;
             this.radius = _radius;
@@ -57,7 +58,7 @@ namespace lab01
 
     public class poly : drawable
     {
-        private List<line> _Lines;
+        private List<drawable> _Lines;
         private List<vertex> _Vertices;
         public override List<Point> Pixels
         {
@@ -71,7 +72,7 @@ namespace lab01
             }
         }
 
-        public poly(List<line> _lines, List<vertex> _vertices) : base(null, Color.Black)
+        public poly(List<drawable> _lines, List<vertex> _vertices) : base(null, Brushes.Black)
         {
             this._Vertices = _vertices;
             this._Lines = _lines;

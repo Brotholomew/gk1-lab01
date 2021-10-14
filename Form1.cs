@@ -17,36 +17,11 @@ namespace lab01
             InitializeComponent();
             printer.Initialize(canvas);
             designer.Initialize();
-
-            for (int i = printer.Width / 4; i <= printer.Width / 4 * 3; i++)
-                printer.PutPixel(printer.Width / 2, i, Color.Black);
         }
 
         private void clickButtonLineDraw(object sender, EventArgs e)
         {
             this.Cursor = embellisher.SwitchCursor(this.Cursor, Cursors.Cross);
-            //designer.DrawCircle(new Point(printer.Width / 2, printer.Height / 2), 50);
-
-            //designer.DrawLine(new Point(100, 100), new Point(140, 140)); // First quadrant
-            //designer.DrawLine(new Point(100, 100), new Point(100, 140)); // Y-Axis
-            //designer.DrawLine(new Point(100, 100), new Point(140, 100)); // X-Axis
-
-            //designer.DrawLine(new Point(100, 100), new Point(140, 60)); // Second quadrant
-            //designer.DrawLine(new Point(100, 100), new Point(100, 60)); // Y-Axis
-
-            //designer.DrawLine(new Point(100, 100), new Point(60, 60)); // Third quadrant
-            //designer.DrawLine(new Point(100, 100), new Point(60, 100)); // X-Axis
-
-            //designer.DrawLine(new Point(100, 100), new Point(60, 140)); // Fourth quadrant
-
-            /*for (int i = printer.Width / 4; i <= printer.Width / 4 * 3; i++)
-                printer.PutPixel(i, printer.Height / 2, Color.Black);
-
-            for (int i = printer.Height / 4; i <= printer.Height / 4 * 3; i++)
-                printer.PutPixel(printer.Width / 2, i, Color.Black);
-
-            for (int i = printer.Width / 8 * 3; i <= printer.Width / 8 * 5; i++)
-                printer.PutPixel(i, 319, Color.Black);*/
         }
 
         private void mouseMoveCanvas(object sender, MouseEventArgs e)
@@ -57,6 +32,29 @@ namespace lab01
         private void onMouseClickCanvas(object sender, MouseEventArgs e)
         {
             designer.DrawPoly(e);
+        }
+
+        private void canvas_Paint(object sender, PaintEventArgs e)
+        {
+            // my own implementation of Double Buffering
+            using (Bitmap bitmap = new Bitmap(printer.Width, printer.Height))
+            {
+                using (Graphics gx = Graphics.FromImage(bitmap))
+                {
+                    // prepare a new canvas
+                    gx.Clear(Color.White);
+
+                    // swap canvas in printer
+                    printer.SetGraphics(gx);
+
+                    // reprint all objects
+                    designer.Canvas.Reprint();
+                    
+                    // swap canvas on the screen
+                    e.Graphics.DrawImage(bitmap, 0, 0);
+                    printer.UpdateGraphics();
+                }
+            }
         }
     }
 }

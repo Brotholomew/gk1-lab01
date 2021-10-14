@@ -32,7 +32,6 @@ namespace lab01
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(mainForm));
             this.canvas = new System.Windows.Forms.PictureBox();
             this.buttonLineDraw = new System.Windows.Forms.Button();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
             this.SuspendLayout();
             // 
@@ -45,6 +44,7 @@ namespace lab01
             this.canvas.Size = new System.Drawing.Size(688, 539);
             this.canvas.TabIndex = 0;
             this.canvas.TabStop = false;
+            this.canvas.Paint += new System.Windows.Forms.PaintEventHandler(this.canvas_Paint);
             this.canvas.MouseClick += new System.Windows.Forms.MouseEventHandler(this.onMouseClickCanvas);
             this.canvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mouseMoveCanvas);
             // 
@@ -77,7 +77,6 @@ namespace lab01
 
         private System.Windows.Forms.PictureBox canvas;
         private System.Windows.Forms.Button buttonLineDraw;
-        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }
 

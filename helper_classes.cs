@@ -10,9 +10,7 @@ namespace lab01
     struct CanvasPixel 
     {
         public List<drawable> Drawables;
-        public vertex V;
-
-        public bool Set;
+        public drawable V;
     }
 
     public static class embellisher

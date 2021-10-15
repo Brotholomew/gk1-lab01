@@ -11,7 +11,7 @@ namespace lab01
         private static readonly Brush VertexBrush = Brushes.Blue;
         private static readonly Brush FirstVertexBrush = Brushes.Red;
 
-        public static void DrawPoly(MouseEventArgs e, ref DesignModes dm)
+        public static void DrawPoly(MouseEventArgs e, mainForm f)
         {
             // rysowanie linii, łamanych oraz wielokątów
             if (designer._State == PrintingStates.Off)
@@ -51,7 +51,7 @@ namespace lab01
                     designer._Canvas.PrintDrawable(p);
                     designer._Canvas.ErasePreview();
 
-                    dm = DesignModes.Off;
+                    f.DM = DesignModes.Off;
                 }
                 else
                 {

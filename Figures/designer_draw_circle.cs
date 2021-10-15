@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using System.Windows.Forms;
 
 namespace lab01
 {
@@ -9,7 +10,7 @@ namespace lab01
     {
         public static vertex FirstVertex = null;
 
-        public static void DrawCircle(Point p, ref DesignModes dm, bool finish = false)
+        public static void DrawCircle(Point p, mainForm f, bool finish = false)
         {
             if (designer._State == PrintingStates.Off) 
             {
@@ -36,7 +37,7 @@ namespace lab01
 
                     designer.FirstVertex = null;
                     designer._State = PrintingStates.Off;
-                    dm = DesignModes.Off;
+                    f.DM = DesignModes.Off;
                 }
             }
 

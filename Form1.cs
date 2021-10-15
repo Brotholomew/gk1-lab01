@@ -15,6 +15,15 @@ namespace lab01
     public partial class mainForm : Form
     {
         private DesignModes _DesignMode = DesignModes.Off;
+        public DesignModes DM { get => this._DesignMode;
+            set
+            {
+                if (value == DesignModes.Off)
+                    this.Cursor = embellisher.NormalCursor;
+
+                this._DesignMode = value;
+            }
+        }
         public mainForm()
         {
             InitializeComponent();
@@ -25,38 +34,34 @@ namespace lab01
 
         private void clickButtonLineDraw(object sender, EventArgs e)
         {
-            this._DesignMode = this._DesignMode == DesignModes.Poly ? DesignModes.Off : DesignModes.Poly;
+            this.DM = this._DesignMode == DesignModes.Poly ? DesignModes.Off : DesignModes.Poly;
 
             if (this._DesignMode == DesignModes.Poly)
                 this.Cursor = embellisher.CircleDrawCursor;
-            else
-                this.Cursor = embellisher.NormalCursor;
         }
 
         private void MouseClickButtonCircleDraw(object sender, MouseEventArgs e)
         {
-            this._DesignMode = this._DesignMode == DesignModes.Circle ? DesignModes.Off : DesignModes.Circle;
+            this.DM = this._DesignMode == DesignModes.Circle ? DesignModes.Off : DesignModes.Circle;
 
             if (this._DesignMode == DesignModes.Circle)
                 this.Cursor = embellisher.CircleDrawCursor;
-            else
-                this.Cursor = embellisher.NormalCursor;
         }
 
         private void mouseMoveCanvas(object sender, MouseEventArgs e)
         {
-            designer.FollowMouse(e, this._DesignMode);
+            designer.FollowMouse(e, this);
         }
 
         private void onMouseClickCanvas(object sender, MouseEventArgs e)
         {
             if (this._DesignMode == DesignModes.Poly)
             {
-                designer.DrawPoly(e, ref this._DesignMode);
+                designer.DrawPoly(e, this);
             }
             else if (this._DesignMode == DesignModes.Circle)
             {
-                designer.DrawCircle(e.Location, ref this._DesignMode, designer.State == PrintingStates.FollowMouse);
+                designer.DrawCircle(e.Location, this, designer.State == PrintingStates.FollowMouse);
 
             }
         }

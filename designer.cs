@@ -29,16 +29,16 @@ namespace lab01
             designer._Canvas = new Canvas();
         }
 
-        public static void FollowMouse(MouseEventArgs e, DesignModes dm)
+        public static void FollowMouse(MouseEventArgs e, mainForm f)
         {
             if (designer._State == PrintingStates.FollowMouse)
             {
                 designer._Canvas.ErasePreview();
 
-                if (dm == DesignModes.Poly)
+                if (f.DM == DesignModes.Poly)
                     designer.LastLine = designer.DrawLine(LastPoint, e.Location, Brushes.Black);
-                else if (dm == DesignModes.Circle)
-                    designer.DrawCircle(e.Location, ref dm);
+                else if (f.DM == DesignModes.Circle)
+                    designer.DrawCircle(e.Location, f);
 
                 printer.Erase();
             }

@@ -11,12 +11,10 @@ namespace lab01
         private static readonly Brush VertexBrush = Brushes.Blue;
         private static readonly Brush FirstVertexBrush = Brushes.Red;
 
-        public static void DrawPoly(MouseEventArgs e)
+        public static void DrawPoly(MouseEventArgs e, ref DesignModes dm)
         {
-            designer.LastLine = null;
-            
             // rysowanie linii, łamanych oraz wielokątów
-            if (designer.State == PrintingStates.Off)
+            if (designer._State == PrintingStates.Off)
             {
                 // pierwszy punkt
                 vertex v = designer.DrawVertex(e.Location, designer.FirstVertexBrush);
@@ -25,7 +23,7 @@ namespace lab01
                 designer.LastPoint = new Point(e.Location.X, e.Location.Y);
                 designer.FirstPoint = new Point(e.Location.X, e.Location.Y);
 
-                designer.State = PrintingStates.FollowMouse;
+                designer._State = PrintingStates.FollowMouse;
             }
             else
             {
@@ -33,7 +31,7 @@ namespace lab01
                 if (designer._Lines.Count > 0 && 
                     designer.Distance(e.Location, designer.FirstPoint) <= printer.VertexRadius)
                 {
-                    designer.State = PrintingStates.Off;
+                    designer._State = PrintingStates.Off;
 
                     line l = designer.DrawLine(designer.LastPoint, designer.FirstPoint, Brushes.Black);
                     
@@ -52,6 +50,8 @@ namespace lab01
                     designer._Canvas.RegisterDrawable(p);
                     designer._Canvas.PrintDrawable(p);
                     designer._Canvas.ErasePreview();
+
+                    dm = DesignModes.Off;
                 }
                 else
                 {

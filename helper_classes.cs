@@ -5,18 +5,14 @@ using System.Windows.Forms;
 
 namespace lab01
 {
-    enum PrintingStates { StartPoly, FollowMouse, Off };
-
-    struct CanvasPixel 
-    {
-        public List<drawable> Drawables;
-        public drawable V;
-    }
+    public enum PrintingStates { StartPoly, FollowMouse, Off };
 
     public static class embellisher
     {
         // cursors
-        private static Cursor NormalCursor = Cursors.Default;
+        public static readonly Cursor NormalCursor = Cursors.Default;
+        public static readonly Cursor PolyDrawCursor = Cursors.Cross;
+        public static readonly Cursor CircleDrawCursor = Cursors.Cross;
         
         public static Cursor SwitchCursor(Cursor current, Cursor switched = null) {
             if (current == embellisher.NormalCursor)

@@ -10,7 +10,8 @@ namespace lab01
 {
     public static partial class designer
     {
-        private static PrintingStates State = PrintingStates.Off;
+        private static PrintingStates _State = PrintingStates.Off;
+        public static PrintingStates State { get => designer._State; }
 
         private static Point NullPoint = new Point(-1, -1);
 
@@ -28,13 +29,17 @@ namespace lab01
             designer._Canvas = new Canvas();
         }
 
-        public static void FollowMouse(MouseEventArgs e)
+        public static void FollowMouse(MouseEventArgs e, DesignModes dm)
         {
-            if (designer.State == PrintingStates.FollowMouse)
+            if (designer._State == PrintingStates.FollowMouse)
             {
-                if (designer.LastLine != null) designer._Canvas.ErasePreview();
+                designer._Canvas.ErasePreview();
 
-                designer.LastLine = designer.DrawLine(LastPoint, e.Location, Brushes.Black);
+                if (dm == DesignModes.Poly)
+                    designer.LastLine = designer.DrawLine(LastPoint, e.Location, Brushes.Black);
+                else if (dm == DesignModes.Circle)
+                    designer.DrawCircle(e.Location, ref dm);
+
                 printer.Erase();
             }
         }

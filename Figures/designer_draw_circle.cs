@@ -9,24 +9,23 @@ namespace lab01
     {
         public static vertex FirstVertex = null;
 
-        public static void DrawCircle(Point p)
+        public static void DrawCircle(Point p, ref DesignModes dm, bool finish = false)
         {
-            if (designer.State == PrintingStates.Off) 
+            if (designer._State == PrintingStates.Off) 
             {
                 designer.FirstVertex = designer.DrawVertex(p, Brushes.Black);
                 designer._Canvas.RegisterVertex(designer.FirstVertex);
 
-                designer.State = PrintingStates.FollowMouse;
+                designer._State = PrintingStates.FollowMouse;
             } 
             else
             {
                 int radius = (int)designer.Distance(p, designer.FirstVertex.Pixels[0]);
                 designer._Canvas.ErasePreview();
 
-                if (designer.LastPoint == designer.NullPoint)
+                if (!finish)
                 {
                     // FollowMouse
-                    
                     designer._DrawCircle(designer.FirstVertex.Pixels[0], radius, Brushes.Black);
                 }
                 else
@@ -36,7 +35,8 @@ namespace lab01
                     designer._Canvas.RegisterDrawable(c);
 
                     designer.FirstVertex = null;
-                    designer.LastPoint = designer.NullPoint;
+                    designer._State = PrintingStates.Off;
+                    dm = DesignModes.Off;
                 }
             }
 

@@ -26,20 +26,39 @@ namespace lab01
         private void clickButtonLineDraw(object sender, EventArgs e)
         {
             this._DesignMode = this._DesignMode == DesignModes.Poly ? DesignModes.Off : DesignModes.Poly;
-            this.Cursor = embellisher.SwitchCursor(this.Cursor, Cursors.Cross);
+
+            if (this._DesignMode == DesignModes.Poly)
+                this.Cursor = embellisher.CircleDrawCursor;
+            else
+                this.Cursor = embellisher.NormalCursor;
+        }
+
+        private void MouseClickButtonCircleDraw(object sender, MouseEventArgs e)
+        {
+            this._DesignMode = this._DesignMode == DesignModes.Circle ? DesignModes.Off : DesignModes.Circle;
+
+            if (this._DesignMode == DesignModes.Circle)
+                this.Cursor = embellisher.CircleDrawCursor;
+            else
+                this.Cursor = embellisher.NormalCursor;
         }
 
         private void mouseMoveCanvas(object sender, MouseEventArgs e)
         {
-            designer.FollowMouse(e);
+            designer.FollowMouse(e, this._DesignMode);
         }
 
         private void onMouseClickCanvas(object sender, MouseEventArgs e)
         {
             if (this._DesignMode == DesignModes.Poly)
-                designer.DrawPoly(e);
+            {
+                designer.DrawPoly(e, ref this._DesignMode);
+            }
             else if (this._DesignMode == DesignModes.Circle)
-                designer.DrawCircle(e.Location);
+            {
+                designer.DrawCircle(e.Location, ref this._DesignMode, designer.State == PrintingStates.FollowMouse);
+
+            }
         }
 
         private void canvas_Paint(object sender, PaintEventArgs e)

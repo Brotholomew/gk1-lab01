@@ -29,10 +29,12 @@ namespace lab01
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(mainForm));
             this.canvas = new System.Windows.Forms.PictureBox();
-            this.buttonLineDraw = new System.Windows.Forms.Button();
+            this.ButtonPolyDraw = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.ButtonCircleDraw = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // canvas
@@ -48,27 +50,49 @@ namespace lab01
             this.canvas.MouseClick += new System.Windows.Forms.MouseEventHandler(this.onMouseClickCanvas);
             this.canvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mouseMoveCanvas);
             // 
-            // buttonLineDraw
+            // ButtonPolyDraw
             // 
-            this.buttonLineDraw.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonLineDraw.BackgroundImage")));
-            this.buttonLineDraw.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.buttonLineDraw.Location = new System.Drawing.Point(707, 13);
-            this.buttonLineDraw.Name = "buttonLineDraw";
-            this.buttonLineDraw.Size = new System.Drawing.Size(71, 72);
-            this.buttonLineDraw.TabIndex = 1;
-            this.buttonLineDraw.UseVisualStyleBackColor = true;
-            this.buttonLineDraw.Click += new System.EventHandler(this.clickButtonLineDraw);
+            this.ButtonPolyDraw.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ButtonPolyDraw.Location = new System.Drawing.Point(12, 22);
+            this.ButtonPolyDraw.Name = "ButtonPolyDraw";
+            this.ButtonPolyDraw.Size = new System.Drawing.Size(182, 30);
+            this.ButtonPolyDraw.TabIndex = 1;
+            this.ButtonPolyDraw.Text = "Poly / Line";
+            this.ButtonPolyDraw.UseVisualStyleBackColor = true;
+            this.ButtonPolyDraw.Click += new System.EventHandler(this.clickButtonLineDraw);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.ButtonCircleDraw);
+            this.groupBox1.Controls.Add(this.ButtonPolyDraw);
+            this.groupBox1.Location = new System.Drawing.Point(706, 12);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(202, 101);
+            this.groupBox1.TabIndex = 2;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Draw";
+            // 
+            // ButtonCircleDraw
+            // 
+            this.ButtonCircleDraw.Location = new System.Drawing.Point(12, 58);
+            this.ButtonCircleDraw.Name = "ButtonCircleDraw";
+            this.ButtonCircleDraw.Size = new System.Drawing.Size(182, 33);
+            this.ButtonCircleDraw.TabIndex = 2;
+            this.ButtonCircleDraw.Text = "Circle";
+            this.ButtonCircleDraw.UseVisualStyleBackColor = true;
+            this.ButtonCircleDraw.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseClickButtonCircleDraw);
             // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(901, 563);
-            this.Controls.Add(this.buttonLineDraw);
+            this.ClientSize = new System.Drawing.Size(920, 563);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.canvas);
             this.Name = "mainForm";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).EndInit();
+            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -76,7 +100,9 @@ namespace lab01
         #endregion
 
         private System.Windows.Forms.PictureBox canvas;
-        private System.Windows.Forms.Button buttonLineDraw;
+        private System.Windows.Forms.Button ButtonPolyDraw;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button ButtonCircleDraw;
     }
 }
 

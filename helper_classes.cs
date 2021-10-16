@@ -40,5 +40,6 @@ namespace lab01
             obj1 = obj2;
             obj2 = buf;
         }
+        public static Point Midpoint(Point p1, Point p2) => new Point((int)Math.Ceiling((p1.X + p2.X) / 2.0), (int)Math.Ceiling((p1.Y + p2.Y) / 2.0));
     }
 }

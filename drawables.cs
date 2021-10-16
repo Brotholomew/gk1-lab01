@@ -189,6 +189,35 @@ namespace lab01
             designer.Canvas.Reprint();
             printer.Erase();
         }
+
+        public void AddVertex()
+        {
+            Point midpoint = Functors.Midpoint(this.Start, this.End);
+            vertex v = designer.DrawVertex(midpoint, embellisher.VertexBrush);
+            
+            this.Poly.Vertices.Add(v);
+
+            List<vertex> temp = new List<vertex>();
+            foreach (var vx in this.Vertices)
+            {
+                temp.Add(vx);
+                vx.AdjacentLines.Remove(this);
+
+                line l = null;
+                designer.Canvas.PrintToMain(() => l = designer.DrawLine(v.Center, vx.Center, embellisher.DrawColor));
+                designer.Canvas.RegisterDrawable(l);
+                l.Poly = this.Poly;
+                l.Vertices.Add(vx);
+                l.Vertices.Add(v);
+
+                vx.AdjacentLines.Add(l);
+                v.AdjacentLines.Add(l);
+                this.Poly.Lines.Add(l);
+            }
+
+            this.Vertices.Clear();
+            this.Delete();
+        }
     }
 
     public class circle : drawable

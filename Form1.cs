@@ -132,10 +132,14 @@ namespace lab01
             if (designer.Tracked.Count == 1)
             {
                 DeleteButton.Enabled = true;
+
+                if (designer.Tracked[0] is line)
+                    AddVertexButton.Enabled = true;
             } 
             else
             {
                 DeleteButton.Enabled = false;
+                AddVertexButton.Enabled = false;
             }
         }
 
@@ -155,7 +159,10 @@ namespace lab01
 
         private void MouseClickAddVertexButton(object sender, MouseEventArgs e)
         {
-
+            designer.Canvas.Highlights.Remove(designer.Tracked[0]);
+            ((line)designer.Tracked[0]).AddVertex();
+            designer.Tracked.Clear();
+            this.UpdateButtons();
         }
     }
 }

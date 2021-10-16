@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace lab01
 {
-    public enum DesignModes { Off, Poly, Circle, DeleteFigure, DeleteVertex, DeleteEdge, Moving };
+    public enum DesignModes { Off, Poly, Circle, Moving };
 
     public partial class mainForm : Form
     {
@@ -51,7 +51,16 @@ namespace lab01
 
         private void mouseMoveCanvas(object sender, MouseEventArgs e)
         {
-            designer.FollowMouse(e, this); 
+            designer.FollowMouse(e, this);
+
+            if (this.DM == DesignModes.Moving)
+            {
+                designer.Canvas.ErasePreview();
+                drawable d = designer._Moving;
+                d.Move(e, Functors.Distance(e.Location, designer._LastPoint), designer.RelationSanitizer);
+                designer._LastPoint = e.Location;
+                printer.Erase();
+            }
         }
 
         private void onMouseClickCanvas(object sender, MouseEventArgs e)
@@ -63,27 +72,6 @@ namespace lab01
             else if (this._DesignMode == DesignModes.Circle)
             {
                 designer.DrawCircle(e.Location, this, designer.State == PrintingStates.FollowMouse);
-            }
-            else if (this.DM == DesignModes.DeleteFigure)
-            {
-                //designer.Canvas.Remove
-            }
-            else if (this.DM == DesignModes.DeleteEdge)
-            {
-
-            }
-            else if (this.DM == DesignModes.DeleteVertex)
-            {
-
-            }
-
-            if (designer.LastTracked != null)
-            {
-                drawable d = designer.LastTracked;
-
-
-                // moving
-                this._DesignMode = DesignModes.Moving;
             }
 
             if (e.Button == MouseButtons.Right)
@@ -103,6 +91,14 @@ namespace lab01
 
         private void MouseUpCanvas(object sender, MouseEventArgs e)
         {
+            if (designer._Moving != null)
+            {
+                drawable d = designer._Moving;
+                this._DesignMode = DesignModes.Off;
+                designer._LastPoint = Point.Empty;
+                d.PostMove();
+            }
+
             if (designer.LastTracked != null)
             {
                 this._DesignMode = DesignModes.Off;
@@ -119,11 +115,13 @@ namespace lab01
                     designer.Canvas.Highlights.Add(d, embellisher.SelectedColor);
                 }
 
-                designer.LastTracked = null;
+
                 designer.Canvas.Reprint();
                 printer.Erase();
             }
 
+            designer.LastTracked = null;
+            designer._Moving = null;
             this.UpdateButtons();
         }
 
@@ -163,6 +161,18 @@ namespace lab01
             ((line)designer.Tracked[0]).AddVertex();
             designer.Tracked.Clear();
             this.UpdateButtons();
+        }
+
+        private void MouseDownCanvas(object sender, MouseEventArgs e)
+        {
+            if (designer.LastTracked != null)
+            {
+                designer._Moving = designer.LastTracked;
+                designer._LastPoint = e.Location;
+                designer._Moving.PreMove();
+                // moving
+                this._DesignMode = DesignModes.Moving;
+            }
         }
     }
 }

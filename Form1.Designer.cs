@@ -53,6 +53,7 @@ namespace lab01
             this.canvas.TabStop = false;
             this.canvas.Paint += new System.Windows.Forms.PaintEventHandler(this.canvas_Paint);
             this.canvas.MouseClick += new System.Windows.Forms.MouseEventHandler(this.onMouseClickCanvas);
+            this.canvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MouseDownCanvas);
             this.canvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mouseMoveCanvas);
             this.canvas.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MouseUpCanvas);
             // 

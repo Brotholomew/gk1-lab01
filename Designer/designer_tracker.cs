@@ -45,7 +45,7 @@ namespace lab01
         {
             Dictionary<Point, List<drawable>> map = designer._Canvas.DrawableMap;
 
-            for (int i = p.X; i <= printer.Width; i++)
+            for (int i = p.X; i <= designer.Canvas.FurthestX; i++)
             {
                 Point np = new Point(i, p.Y);
                 if (map.ContainsKey(np) && map[np].Count > 0)

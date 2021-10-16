@@ -27,6 +27,12 @@ namespace lab01
 
         private static Canvas _Canvas = null;
 
+        public static drawable _Moving = null;
+        public static Point _LastPoint = Point.Empty;
+
+        private static RelationSanitizer _RelationSanitizer = new RelationSanitizer();
+        public static RelationSanitizer RelationSanitizer { get => designer._RelationSanitizer; }
+
         public static void Initialize()
         {
             designer._Canvas = new Canvas();
@@ -46,16 +52,16 @@ namespace lab01
                 {
                     
                 }
+                printer.Erase();
 
-                
-            } 
+
+            }
             else
             {
                 designer._Canvas.ErasePreview();
                 designer.LastTracked = designer.Track(e.Location, embellisher.TrackColor);
             }
 
-            printer.Erase();
         }
 
         public static Canvas Canvas { 

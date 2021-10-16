@@ -13,7 +13,7 @@ namespace lab01
         private Dictionary<Point, List<drawable>> _VertexMap = new Dictionary<Point, List<drawable>>();
         private List<vertex> _VerticesHeap = new List<vertex>();
 
-        public Dictionary<Point, List<drawable>> DrawableMap { get => this._DrawableMap;  }
+        public Dictionary<Point, List<drawable>> DrawableMap { get => this._DrawableMap; }
         public List<drawable> DrawablesHeap { get => this._DrawablesHeap; }
 
         public Dictionary<drawable, Brush> Highlights = new Dictionary<drawable, Brush>();
@@ -33,6 +33,9 @@ namespace lab01
         public Graphics MainGraphics { get => this._MainGraphics; }
         public Graphics PreviewGraphics { get => this._PreviewGraphics; }
 
+        private int _FurthestX = 0;
+        public int FurthestX { get => this._FurthestX; }
+
         public Canvas()
         {
             this._MainGraphics = Graphics.FromImage(this._MainBitmap);
@@ -45,7 +48,12 @@ namespace lab01
         private void InitializePixel(Point p, Dictionary<Point, List<drawable>> map, drawable d)
         {
             if (!map.ContainsKey(p))
+            {
                 map.Add(p, new List<drawable>());
+                
+                if (p.X > this._FurthestX)
+                    this._FurthestX = p.X;
+            }
 
             map[p].Add(d);
         }
@@ -109,6 +117,13 @@ namespace lab01
             printer.SetGraphics(this._PreviewGraphics);
         }
 
+        public void PrintToPreview(Action a)
+        {
+            printer.SetGraphics(this._PreviewGraphics);
+            a.Invoke();
+            printer.SetGraphics(this._PreviewGraphics);
+        }
+
         public void PrintDrawable(drawable d) => this.PrintToMain(() => printer.PutPixels(d.Pixels, d.Brush));
 
         public void PrintVertex(vertex v) => this.PrintToMain(() => printer.PutVertex(v.Pixels[0], v.Brush));
@@ -135,20 +150,6 @@ namespace lab01
         {
             foreach (var v in l)
                 this.EraseVertex(v);
-        }
-
-        public void DeregisterDrawable(drawable d)
-        {
-            foreach (var pixel in d.Pixels)
-                if (this._DrawableMap.ContainsKey(pixel)) this._DrawableMap[pixel].Remove(d);
-
-            this._DrawablesHeap.Remove(d);
-        }
-
-        public void DeregisterDrawables(List<drawable> drawables)
-        {
-            foreach (var d in drawables)
-                this.DeregisterDrawable(d);
         }
     }
 }

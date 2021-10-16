@@ -42,7 +42,7 @@ namespace lab01
             printer.Erase();
         }
 
-        private static circle _DrawCircle(vertex v, int radius, Brush b)
+        public static circle _DrawCircle(vertex v, int radius, Brush b)
         {
             Point center = v.Center;
             int d = 1 - radius;

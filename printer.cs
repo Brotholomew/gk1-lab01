@@ -48,7 +48,25 @@ namespace lab01
                printer.PutPixel(pixel, brush);
         }
 
-        public static void PutVertex(Point p, Brush brush) => printer.Canvas.FillEllipse(brush, p.X - printer.VertexRadius, p.Y - printer.VertexRadius, 2 * printer.VertexRadius + 1, 2 * printer.VertexRadius + 1);
+        public static void PutVertex(Point p, Brush brush) => printer.PutCircle(p, printer.VertexRadius, brush);
+
+        private static void PutCircle(Point p, int radius, Brush brush) => printer.Canvas.FillEllipse(brush, p.X - radius, p.Y - radius, 2 * radius + 1, 2 * radius + 1);
+
+        public static void PutFigure(drawable d, Brush brush)
+        {
+            if (d is circle)
+            {
+                circle temp = (circle)d;
+                printer.PutCircle(temp.Vertices[0].Pixels[0], temp.Radius, brush);
+                printer.PutVertex(temp.Vertices[0].Pixels[0], temp.Vertices[0].Brush);
+                //printer.PutPixels(temp.Pixels, );
+            }
+            else if (d is poly)
+            {
+                poly temp = (poly)d;
+                printer.Canvas.FillPolygon(brush, temp.Vertices.ConvertAll((vertex v) => v.Pixels[0]).ToArray());
+            }
+        }
 
         public static void Erase()
         {

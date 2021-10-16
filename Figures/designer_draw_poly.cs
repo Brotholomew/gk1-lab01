@@ -8,8 +8,7 @@ namespace lab01
 {
     public static partial class designer
     {
-        private static readonly Brush VertexBrush = Brushes.Blue;
-        private static readonly Brush FirstVertexBrush = Brushes.Red;
+        
 
         public static void DrawPoly(MouseEventArgs e, mainForm f)
         {
@@ -17,7 +16,7 @@ namespace lab01
             if (designer._State == PrintingStates.Off)
             {
                 // pierwszy punkt
-                vertex v = designer.DrawVertex(e.Location, designer.FirstVertexBrush);
+                vertex v = designer.DrawVertex(e.Location, embellisher.FirstVertexBrush);
                 designer._Vertices.Add(v);
 
                 designer.LastPoint = new Point(e.Location.X, e.Location.Y);
@@ -33,22 +32,27 @@ namespace lab01
                 {
                     designer._State = PrintingStates.Off;
 
-                    line l = designer.DrawLine(designer.LastPoint, designer.FirstPoint, Brushes.Black);
-                    
+                    line l = null;
+                    designer.Canvas.PrintToMain(() => l = designer.DrawLine(designer.LastPoint, e.Location, Brushes.Black));
+                    designer._Canvas.RegisterDrawable(l);
+                    l.AddVertex(designer._Vertices[designer._Vertices.Count - 1]);
+                    l.AddVertex(designer._Vertices[0]);
+
                     designer._Lines.Add(l);
-                    designer._Canvas.DeregisterDrawables(designer._Lines);
-                    designer._Vertices[0].Brush = designer.VertexBrush;
+                    designer._Vertices[0].Brush = embellisher.VertexBrush;
+                    designer._Vertices[designer._Vertices.Count - 1].AddLine(l);
+                    designer._Vertices[0].AddLine(l);
                     designer._Canvas.PrintVertex(designer._Vertices[0]);
 
                     poly p = new poly(designer._Lines, designer._Vertices);
+                    foreach (var _line in designer._Lines)
+                        ((line) _line).Poly = p;
 
                     designer._Lines = new List<drawable>();
                     designer._Vertices = new List<vertex>();
                     designer.LastPoint = designer.NullPoint;
                     designer.FirstPoint = designer.NullPoint;
 
-                    designer._Canvas.RegisterDrawable(p);
-                    designer._Canvas.PrintDrawable(p);
                     designer._Canvas.ErasePreview();
 
                     f.DM = DesignModes.Off;
@@ -56,12 +60,17 @@ namespace lab01
                 else
                 {
                     // kolejny punkt
-                    vertex v = designer.DrawVertex(e.Location, designer.VertexBrush);
+                    vertex v = designer.DrawVertex(e.Location, embellisher.VertexBrush);
                     designer._Vertices.Add(v);
                     line l = null;
                     designer.Canvas.PrintToMain(() => l = designer.DrawLine(designer.LastPoint, e.Location, Brushes.Black));
                     designer._Canvas.RegisterDrawable(l);
                     designer._Lines.Add(l);
+                    designer._Vertices[designer._Vertices.Count - 1].AddLine(l);
+                    designer._Vertices[designer._Vertices.Count - 2].AddLine(l);
+
+                    l.AddVertex(designer._Vertices[designer._Vertices.Count - 1]);
+                    l.AddVertex(designer._Vertices[designer._Vertices.Count - 2]);
                 }
 
                 designer.LastPoint = e.Location;

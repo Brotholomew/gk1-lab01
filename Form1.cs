@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace lab01
 {
-    public enum DesignModes { Off, Poly, Circle };
+    public enum DesignModes { Off, Poly, Circle, DeleteFigure, DeleteVertex, DeleteEdge, Moving };
 
     public partial class mainForm : Form
     {
@@ -30,6 +30,7 @@ namespace lab01
             printer.Initialize(canvas);
             designer.Initialize();
             printer.SetGraphics(designer.Canvas.PreviewGraphics);
+            this.UpdateButtons();
         }
 
         private void clickButtonLineDraw(object sender, EventArgs e)
@@ -50,7 +51,7 @@ namespace lab01
 
         private void mouseMoveCanvas(object sender, MouseEventArgs e)
         {
-            designer.FollowMouse(e, this);
+            designer.FollowMouse(e, this); 
         }
 
         private void onMouseClickCanvas(object sender, MouseEventArgs e)
@@ -62,7 +63,35 @@ namespace lab01
             else if (this._DesignMode == DesignModes.Circle)
             {
                 designer.DrawCircle(e.Location, this, designer.State == PrintingStates.FollowMouse);
+            }
+            else if (this.DM == DesignModes.DeleteFigure)
+            {
+                //designer.Canvas.Remove
+            }
+            else if (this.DM == DesignModes.DeleteEdge)
+            {
 
+            }
+            else if (this.DM == DesignModes.DeleteVertex)
+            {
+
+            }
+
+            if (designer.LastTracked != null)
+            {
+                drawable d = designer.LastTracked;
+
+
+                // moving
+                this._DesignMode = DesignModes.Moving;
+            }
+
+            if (e.Button == MouseButtons.Right)
+            {
+                designer.Tracked.Clear();
+                designer.Canvas.Highlights.Clear();
+                designer.Canvas.Reprint();
+                printer.Erase();
             }
         }
 
@@ -70,6 +99,63 @@ namespace lab01
         {
             e.Graphics.DrawImage(designer.Canvas.MainBitmap, 0, 0);
             e.Graphics.DrawImage(designer.Canvas.Preview, 0, 0);
+        }
+
+        private void MouseUpCanvas(object sender, MouseEventArgs e)
+        {
+            if (designer.LastTracked != null)
+            {
+                this._DesignMode = DesignModes.Off;
+                drawable d = designer.LastTracked;
+                
+                if (designer.Tracked.Contains(d))
+                {
+                    designer.Canvas.Highlights.Remove(d);
+                    designer.Tracked.Remove(d);
+                }
+                else
+                {
+                    designer.Tracked.Add(d);
+                    designer.Canvas.Highlights.Add(d, embellisher.SelectedColor);
+                }
+
+                designer.LastTracked = null;
+                designer.Canvas.Reprint();
+                printer.Erase();
+            }
+
+            this.UpdateButtons();
+        }
+
+        private void UpdateButtons()
+        {
+            if (designer.Tracked.Count == 1)
+            {
+                DeleteButton.Enabled = true;
+            } 
+            else
+            {
+                DeleteButton.Enabled = false;
+            }
+        }
+
+        private void MouseClickDeleteButton(object sender, MouseEventArgs e)
+        {
+            drawable d = designer.Tracked[0];
+            designer.Tracked.Clear();
+            designer.Canvas.Highlights.Remove(d);
+            d.Delete();
+            this.UpdateButtons();
+        }
+
+        private void MouseClickMoveButton(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void MouseClickAddVertexButton(object sender, MouseEventArgs e)
+        {
+
         }
     }
 }

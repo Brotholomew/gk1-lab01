@@ -33,8 +33,13 @@ namespace lab01
             this.ButtonPolyDraw = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.ButtonCircleDraw = new System.Windows.Forms.Button();
+            this.DeleteButton = new System.Windows.Forms.Button();
+            this.MoveButton = new System.Windows.Forms.Button();
+            this.AddVertexButton = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // canvas
@@ -49,6 +54,7 @@ namespace lab01
             this.canvas.Paint += new System.Windows.Forms.PaintEventHandler(this.canvas_Paint);
             this.canvas.MouseClick += new System.Windows.Forms.MouseEventHandler(this.onMouseClickCanvas);
             this.canvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mouseMoveCanvas);
+            this.canvas.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MouseUpCanvas);
             // 
             // ButtonPolyDraw
             // 
@@ -82,17 +88,61 @@ namespace lab01
             this.ButtonCircleDraw.UseVisualStyleBackColor = true;
             this.ButtonCircleDraw.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseClickButtonCircleDraw);
             // 
+            // DeleteButton
+            // 
+            this.DeleteButton.Location = new System.Drawing.Point(11, 23);
+            this.DeleteButton.Name = "DeleteButton";
+            this.DeleteButton.Size = new System.Drawing.Size(182, 29);
+            this.DeleteButton.TabIndex = 0;
+            this.DeleteButton.Text = "Delete";
+            this.DeleteButton.UseVisualStyleBackColor = true;
+            this.DeleteButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseClickDeleteButton);
+            // 
+            // MoveButton
+            // 
+            this.MoveButton.Location = new System.Drawing.Point(11, 59);
+            this.MoveButton.Name = "MoveButton";
+            this.MoveButton.Size = new System.Drawing.Size(182, 30);
+            this.MoveButton.TabIndex = 1;
+            this.MoveButton.Text = "Move";
+            this.MoveButton.UseVisualStyleBackColor = true;
+            this.MoveButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseClickMoveButton);
+            // 
+            // AddVertexButton
+            // 
+            this.AddVertexButton.Location = new System.Drawing.Point(11, 96);
+            this.AddVertexButton.Name = "AddVertexButton";
+            this.AddVertexButton.Size = new System.Drawing.Size(182, 31);
+            this.AddVertexButton.TabIndex = 2;
+            this.AddVertexButton.Text = "Add Vertex";
+            this.AddVertexButton.UseVisualStyleBackColor = true;
+            this.AddVertexButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseClickAddVertexButton);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.AddVertexButton);
+            this.groupBox2.Controls.Add(this.MoveButton);
+            this.groupBox2.Controls.Add(this.DeleteButton);
+            this.groupBox2.Location = new System.Drawing.Point(707, 120);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(200, 136);
+            this.groupBox2.TabIndex = 3;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Edit";
+            // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(920, 563);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.canvas);
             this.Name = "mainForm";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).EndInit();
             this.groupBox1.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -103,6 +153,10 @@ namespace lab01
         private System.Windows.Forms.Button ButtonPolyDraw;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button ButtonCircleDraw;
+        private System.Windows.Forms.Button DeleteButton;
+        private System.Windows.Forms.Button MoveButton;
+        private System.Windows.Forms.Button AddVertexButton;
+        private System.Windows.Forms.GroupBox groupBox2;
     }
 }
 

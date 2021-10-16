@@ -13,6 +13,14 @@ namespace lab01
         private Dictionary<Point, List<drawable>> _VertexMap = new Dictionary<Point, List<drawable>>();
         private List<vertex> _VerticesHeap = new List<vertex>();
 
+        public Dictionary<Point, List<drawable>> DrawableMap { get => this._DrawableMap;  }
+        public List<drawable> DrawablesHeap { get => this._DrawablesHeap; }
+
+        public Dictionary<drawable, Brush> Highlights = new Dictionary<drawable, Brush>();
+
+        public Dictionary<Point, List<drawable>> VertexMap { get => this._VertexMap; }
+        public List<vertex> VerticesHeap { get => this._VerticesHeap; }
+
         private Bitmap _MainBitmap = new Bitmap(printer.Width, printer.Height);
         private Bitmap _Preview = new Bitmap(printer.Width, printer.Height);
 
@@ -62,15 +70,35 @@ namespace lab01
 
         public void Reprint()
         {
+            this.ErasePreview();
+            this.EraseMain();
+
             this.PrintToMain(() =>
             {
-                List<Point> temp = new List<Point>();
-
                 foreach (var d in this._DrawablesHeap)
-                    printer.PutPixels(d.Pixels, d.Brush);
+                    if (!this.Highlights.ContainsKey(d)) printer.PutPixels(d.Pixels, d.Brush);
 
                 foreach (var v in this._VerticesHeap)
-                    this.PrintVertex(v);
+                    if (!this.Highlights.ContainsKey(v)) printer.PutVertex(v.Pixels[0], v.Brush);
+
+                foreach (var s in this.Highlights)
+                {
+                    if (s.Key is vertex)
+                        printer.PutVertex(s.Key.Pixels[0], s.Value);
+                    else
+                    {
+                        if (s.Key is line)
+                            printer.PutPixels(s.Key.Pixels, s.Value);
+                        else
+                        {
+                            printer.PutFigure(s.Key, s.Value);
+                            printer.PutPixels(s.Key.Pixels, s.Key.Brush);
+                        }
+
+                    }
+                }
+
+                printer.FlushBuffer();
             });
         }
 
@@ -85,30 +113,28 @@ namespace lab01
 
         public void PrintVertex(vertex v) => this.PrintToMain(() => printer.PutVertex(v.Pixels[0], v.Brush));
 
-        public void ErasePreview()
-        {
-            this._PreviewGraphics.Clear(Color.Transparent);
-        }
+        public void ErasePreview() => this._PreviewGraphics.Clear(Color.Transparent);
+
+        public void EraseMain() => this._MainGraphics.Clear(Color.White);
 
         public void EraseDrawable(drawable d)
         {
             foreach (var pixel in d.Pixels)
-            {
                 this._DrawableMap[pixel].Remove(d);
-                this._DrawablesHeap.Remove(d);
-            }
 
-            this.Reprint();
-            printer.Erase();
+            this._DrawablesHeap.Remove(d);
         }
 
         public void EraseVertex(vertex v)
         {
             this._VertexMap[v.Pixels[0]].Remove(v);
             this._VerticesHeap.Remove(v);
+        }
 
-            this.Reprint();
-            printer.Erase();
+        public void EraseVertices(List<vertex> l)
+        {
+            foreach (var v in l)
+                this.EraseVertex(v);
         }
 
         public void DeregisterDrawable(drawable d)

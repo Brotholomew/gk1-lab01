@@ -15,8 +15,6 @@ namespace lab01
             if (designer._State == PrintingStates.Off) 
             {
                 designer.FirstVertex = designer.DrawVertex(p, Brushes.Black);
-                designer._Canvas.RegisterVertex(designer.FirstVertex);
-
                 designer._State = PrintingStates.FollowMouse;
             } 
             else
@@ -27,14 +25,14 @@ namespace lab01
                 if (!finish)
                 {
                     // FollowMouse
-                    designer._DrawCircle(designer.FirstVertex.Pixels[0], radius, Brushes.Black);
+                    designer._DrawCircle(designer.FirstVertex, radius, Brushes.Black);
                 }
                 else
                 {
                     circle c = null;
-                    designer._Canvas.PrintToMain(() => c = designer._DrawCircle(designer.FirstVertex.Pixels[0], radius, Brushes.Black));
+                    designer._Canvas.PrintToMain(() => c = designer._DrawCircle(designer.FirstVertex, radius, Brushes.Black));
                     designer._Canvas.RegisterDrawable(c);
-
+                    designer.FirstVertex.AdjacentLines.Add(c);
                     designer.FirstVertex = null;
                     designer._State = PrintingStates.Off;
                     f.DM = DesignModes.Off;
@@ -44,8 +42,9 @@ namespace lab01
             printer.Erase();
         }
 
-        private static circle _DrawCircle(Point center, int radius, Brush b)
+        private static circle _DrawCircle(vertex v, int radius, Brush b)
         {
+            Point center = v.Center;
             int d = 1 - radius;
             int dE = 3;
             int dSE = 5 - 2 * radius;
@@ -86,7 +85,7 @@ namespace lab01
                 printer.PutPixel(center.X - dy, center.Y - dx, b);
             }
 
-            circle ret = new circle(center, radius, printer.Buffer, b);
+            circle ret = new circle(v, radius, printer.Buffer, b);
             printer.FlushBuffer();
 
             return ret;

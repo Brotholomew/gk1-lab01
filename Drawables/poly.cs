@@ -11,6 +11,7 @@ namespace lab01
         private List<drawable> _Lines;
 
         public List<drawable> Lines { get => this._Lines; }
+        public bool MovingSimultaneously = false;
 
         public override List<Point> Pixels
         {
@@ -56,6 +57,7 @@ namespace lab01
                 designer.RelationSanitizer.PostMove(this, mo);
             }
 
+            this.MovingSimultaneously = false;
             base.PostMove(mo);
         }
 
@@ -67,6 +69,7 @@ namespace lab01
                 designer.RelationSanitizer.PreMove(this, mo);
             }
 
+            this.MovingSimultaneously = true;
             base.PreMove(mo);
         }
 

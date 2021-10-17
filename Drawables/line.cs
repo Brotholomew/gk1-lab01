@@ -11,6 +11,15 @@ namespace lab01
         private Point _Start;
         private Point _End;
 
+        public bool _MovingSimultaneously = false;
+        public bool MovingSimultaneously
+        {
+            get
+            {
+                return this.Poly.MovingSimultaneously || this._MovingSimultaneously;
+            }
+        }
+
         public Point Start { get => this.Vertices[0].Center; }
         public Point End { get => this.Vertices[1].Center; }
 
@@ -85,8 +94,9 @@ namespace lab01
         {
             foreach (var v in this._Vertices)
             {
-                v.GetNext(this).Register();
-                v.Register();
+                v.PostMove(mo);
+                //v.GetNext(this).Register();
+                //v.Register();
             }
 
             if (!mo.Stop)
@@ -94,6 +104,8 @@ namespace lab01
                 mo.Stop = true;
                 designer.RelationSanitizer.PostMove(this, mo);
             }
+
+            this._MovingSimultaneously = false;
             base.PostMove(mo);
         }
 
@@ -101,8 +113,9 @@ namespace lab01
         {
             foreach (var v in this._Vertices)
             {
-                v.DeregisterDrawable();
-                v.GetNext(this).DeregisterDrawable();
+                v.PreMove(mo);
+                //v.DeregisterDrawable();
+                //v.GetNext(this).DeregisterDrawable();
             }
 
             if (!mo.Stop)
@@ -110,6 +123,8 @@ namespace lab01
                 mo.Stop = true;
                 designer.RelationSanitizer.PreMove(this, mo);
             }
+
+            this._MovingSimultaneously = true;
             base.PreMove(mo);
         }
 
@@ -160,6 +175,22 @@ namespace lab01
         public override void RespondToRelation(Relation rel)
         {
             rel.SanitizeLine(this);
+        }
+
+        public bool IsAdjacent(line l)
+        {
+            foreach (var v in this._Vertices)
+                if (l._Vertices.Contains(v)) return true;
+
+            return false;
+        }
+
+        public vertex CommonVertex(line l)
+        {
+            foreach (var v in this._Vertices)
+                if (l._Vertices.Contains(v)) return v;
+
+            return null;
         }
     }
 

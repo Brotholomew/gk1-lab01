@@ -39,6 +39,7 @@ namespace lab01
         public override void SanitizeVertex(vertex v)
         {
             if (!v.IsAdjacent(this._Drawable)) return;
+            if (this._Drawable.MovingSimultaneously) return;
 
             vertex vx = this._Drawable.GetNext(v);
             double newLength = Functors.RealDistance(vx.Center, v.Center);
@@ -56,6 +57,17 @@ namespace lab01
             }
         }
 
+        //public override void SanitizeLine(line l) 
+        //{
+        //    if (l == this._Drawable) return;
+        //    if (!l.IsAdjacent(this._Drawable)) return;
+
+        //    vertex v = l.CommonVertex(this._Drawable);
+        //    vertex vx = this._Drawable.GetNext(v);
+        //    v.RespondToRelation(this);
+        //    vx.RespondToRelation(this);
+        //}
+
         private List<vertex> GetAffectedVertices(vertex v)
         {
             List<vertex> ret = new List<vertex>();
@@ -68,6 +80,7 @@ namespace lab01
 
         public override void PreMove(vertex v, MovingOpts mo) { foreach (var vx in this.GetAffectedVertices(v)) vx.PreMove(mo); }
         public override void PostMove(vertex v, MovingOpts mo) { foreach (var vx in this.GetAffectedVertices(v)) vx.PostMove(mo); }
+
         public override bool IsBoundWith(drawable d) => d == this._Drawable;
     }
 }

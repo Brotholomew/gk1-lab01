@@ -48,7 +48,11 @@ namespace lab01
                printer.PutPixel(pixel, brush);
         }
 
-        public static void PutVertex(Point p, Brush brush) => printer.PutCircle(p, printer.VertexRadius, brush);
+        public static void PutVertex(Point p, Brush brush)
+        {
+            printer.Canvas.DrawString($"({p.X},{p.Y})", SystemFonts.DefaultFont, embellisher.DrawColor, new Point(p.X, p.Y + 10));
+            printer.PutCircle(p, printer.VertexRadius, brush);
+        }
 
         private static void PutCircle(Point p, int radius, Brush brush) => printer.Canvas.FillEllipse(brush, p.X - radius, p.Y - radius, 2 * radius + 1, 2 * radius + 1);
 

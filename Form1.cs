@@ -53,14 +53,7 @@ namespace lab01
         {
             designer.FollowMouse(e, this);
 
-            if (this.DM == DesignModes.Moving)
-            {
-                designer.Canvas.ErasePreview();
-                drawable d = designer._Moving;
-                d.Move(e, Functors.Distance(e.Location, designer._LastPoint), designer.RelationSanitizer);
-                designer._LastPoint = e.Location;
-                printer.Erase();
-            }
+            
         }
 
         private void onMouseClickCanvas(object sender, MouseEventArgs e)
@@ -81,6 +74,24 @@ namespace lab01
                 designer.Canvas.Reprint();
                 printer.Erase();
             }
+
+            if (designer.LastTracked != null)
+            {
+                this._DesignMode = DesignModes.Off;
+                drawable d = designer.LastTracked;
+
+                if (designer.Tracked.Contains(d))
+                {
+                    designer.Tracked.Remove(d);
+                }
+                else
+                {
+                    designer.Tracked.Add(d);
+                }
+
+                designer.Canvas.Reprint();
+                printer.Erase();
+            }
         }
 
         private void canvas_Paint(object sender, PaintEventArgs e)
@@ -96,28 +107,7 @@ namespace lab01
                 drawable d = designer._Moving;
                 this._DesignMode = DesignModes.Off;
                 designer._LastPoint = Point.Empty;
-                d.PostMove();
-            }
-
-            if (designer.LastTracked != null)
-            {
-                this._DesignMode = DesignModes.Off;
-                drawable d = designer.LastTracked;
-                
-                if (designer.Tracked.Contains(d))
-                {
-                    designer.Canvas.Highlights.Remove(d);
-                    designer.Tracked.Remove(d);
-                }
-                else
-                {
-                    designer.Tracked.Add(d);
-                    designer.Canvas.Highlights.Add(d, embellisher.SelectedColor);
-                }
-
-
-                designer.Canvas.Reprint();
-                printer.Erase();
+                d.PostMove(new MovingOpts(_stop: false));
             }
 
             designer.LastTracked = null;
@@ -127,18 +117,20 @@ namespace lab01
 
         private void UpdateButtons()
         {
+            DeleteButton.Enabled = false;
+            AddVertexButton.Enabled = false;
+            FixedLengthButton.Enabled = false;
+
             if (designer.Tracked.Count == 1)
             {
                 DeleteButton.Enabled = true;
 
                 if (designer.Tracked[0] is line)
+                {
                     AddVertexButton.Enabled = true;
+                    FixedLengthButton.Enabled = true;
+                }
             } 
-            else
-            {
-                DeleteButton.Enabled = false;
-                AddVertexButton.Enabled = false;
-            }
         }
 
         private void MouseClickDeleteButton(object sender, MouseEventArgs e)
@@ -148,11 +140,6 @@ namespace lab01
             designer.Canvas.Highlights.Remove(d);
             d.Delete();
             this.UpdateButtons();
-        }
-
-        private void MouseClickMoveButton(object sender, MouseEventArgs e)
-        {
-
         }
 
         private void MouseClickAddVertexButton(object sender, MouseEventArgs e)
@@ -169,10 +156,17 @@ namespace lab01
             {
                 designer._Moving = designer.LastTracked;
                 designer._LastPoint = e.Location;
-                designer._Moving.PreMove();
+                designer._Moving.PreMove(new MovingOpts(_stop : false));
                 // moving
                 this._DesignMode = DesignModes.Moving;
             }
+        }
+
+        private void MouseClickFixedLengthButton(object sender, MouseEventArgs e)
+        {
+            designer.RelationSanitizer.AddRelation(new FixedLength((line)designer.Tracked[0]));
+            designer.Tracked.Clear();
+            this.UpdateButtons();
         }
     }
 }

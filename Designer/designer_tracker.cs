@@ -74,36 +74,26 @@ namespace lab01
 
         public static drawable Track(Point p, Brush brush)
         {
-            drawable d = designer.TrackVertices(p);
+            drawable d = null;
 
-            if (d != null)
+            if ((d = designer.TrackVertices(p)) != null)
             {
                 printer.PutVertex(d.Pixels[0], brush);
-                return d;
-            }
-
-            d = designer.TrackDrawable(p);
-
-            if (d != null)
+            } 
+            else if ((d = designer.TrackDrawable(p)) != null)
             {
                 printer.PutPixels(d.Pixels, brush);
-                return d;
             }
-
-            d = designer.TrackFigure(p);
-
-            if (d != null)
+            else if ((d = designer.TrackFigure(p)) != null)
             {
                 printer.PutFigure(d, brush);
 
                 if (d is circle)
                     printer.PutVertex(((circle)d).Vertices[0].Pixels[0], ((circle)d).Vertices[0].Brush);
-
-                return d;
-            }
+            } 
 
             printer.FlushBuffer();
-            return null;
+            return d;
         }
     }
 }

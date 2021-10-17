@@ -25,42 +25,55 @@ namespace lab01
             designer.Canvas.EraseVertex(this);
         }
 
-        public override void Print(Action<Action> how)
+        public override void Print(Action<Action> how, Brush brush)
         {
-            how(() => printer.PutVertex(this.Center, embellisher.VertexBrush));
+            how(() => printer.PutVertex(this.Center, brush));
         }
 
         public override void Register() => designer.Canvas.RegisterVertex(this);
 
-        public override void Move(MouseEventArgs e, Point distance, IRelation sanitizer, bool solo = true)
+        public override void Move(MouseEventArgs e, Point distance, Relation sanitizer, MovingOpts mo)
         {
             this._Pixels.Clear();
-            sanitizer.Sanitize(this, ref distance);
+           
             this.p = Functors.MovePoint(this.p, distance);
             this._Pixels.Add(this.p);
-            this.Print(designer.Canvas.PrintToPreview);
+            this.Print(designer.Canvas.PrintToPreview, embellisher.DrawColor);
 
-            if (solo)
+            if (mo.Solo)
             {
                 foreach (var line in this.AdjacentLines)
                     ((line)line).Reprint();
             }
+            sanitizer.Sanitize(this, ref distance, mo);
         }
 
-        public override void PostMove()
+        public override void PostMove(MovingOpts mo)
         {
             foreach (var line in this._Drawables.ConvertAll((drawable d) => (line)d))
                 line.Register();
 
-            base.PostMove();
+            if (!mo.Stop)
+            {
+                mo.Stop = true;
+                designer.RelationSanitizer.PostMove(this, mo);
+            }
+
+            base.PostMove(mo);
         }
 
-        public override void PreMove()
+        public override void PreMove(MovingOpts mo)
         {
             foreach (var line in this._Drawables.ConvertAll((drawable d) => (line)d))
                 line.DeregisterDrawable();
 
-            base.PreMove();
+            if (!mo.Stop)
+            {
+                mo.Stop = true;
+                designer.RelationSanitizer.PreMove(this, mo);
+            }
+
+            base.PreMove(mo);
         }
 
         public override void Delete()
@@ -84,6 +97,7 @@ namespace lab01
                     vx.AdjacentLines.Remove(line);
                     line.Clear();
                     line.Delete();
+                    designer.RelationSanitizer.Delete(line);
 
                     temp.Add(vx);
                 }
@@ -107,6 +121,7 @@ namespace lab01
                 return;
             }
 
+            designer.RelationSanitizer.Delete(this);
             designer.Canvas.EraseVertex(this);
             designer.Canvas.Reprint();
             printer.Erase();
@@ -119,6 +134,9 @@ namespace lab01
 
             return null;
         }
+
+        public bool IsAdjacent(line l) => this._Drawables.Contains(l);
+
         public static vertex Merge(vertex v1, vertex v2)
         {
             if (v1._Drawables.Count > 1 || v2._Drawables.Count > 1)
@@ -155,6 +173,11 @@ namespace lab01
             }
 
             return v;
+        }
+
+        public override void RespondToRelation(Relation rel)
+        {
+            rel.SanitizeVertex(this);
         }
     }
 }

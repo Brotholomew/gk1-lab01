@@ -21,6 +21,11 @@ namespace lab01
         public static readonly Brush SelectedColor = new SolidBrush(Color.FromArgb(150, Color.DarkOrange));
         public static readonly Brush VertexBrush = Brushes.Blue;
         public static readonly Brush FirstVertexBrush = Brushes.Red;
+        public static readonly Brush FixedLengthHighlightBrush = Brushes.LightCoral;
+        public static readonly Brush FixedCenterBrush = Brushes.Red;
+        public static readonly Brush EqualLengthBrush = Brushes.LawnGreen;
+        public static readonly Brush AdjacentBrush = Brushes.CornflowerBlue;
+        public static readonly Brush ParallelBrush = Brushes.Red;
 
         public static Cursor SwitchCursor(Cursor current, Cursor switched = null) {
             if (current == embellisher.NormalCursor)
@@ -49,6 +54,41 @@ namespace lab01
         }
         public static Point Distance(Point p1, Point p2) => new Point(p1.X - p2.X, p1.Y - p2.Y);
         public static double RealDistance(Point start, Point end) => Math.Sqrt(Math.Pow(start.X - end.X, 2) + Math.Pow(start.Y - end.Y, 2));
+        public static LineVariables GetLineVariables(line l)
+        {
+            Point start = l.Start;
+            Point end = l.End;
 
+            double a = (double)(end.Y - start.Y) / (double)(end.X - start.X);
+            double b = start.Y - a * start.X;
+
+            return new LineVariables(a, b);
+        }
+    }
+
+    public struct MovingOpts
+    {
+        public bool Solo;
+        public bool Stop;
+        public bool CircleOpts;
+
+        public MovingOpts(bool _solo = true, bool _stop = false, bool _circleOpts = false)
+        {
+            this.Solo = _solo;
+            this.Stop = _stop;
+            this.CircleOpts = _circleOpts;
+        }
+    }
+
+    public struct LineVariables
+    {
+        public double a;
+        public double b;
+
+        public LineVariables(double _a, double _b)
+        {
+            this.a = _a;
+            this.b = _b;
+        }
     }
 }

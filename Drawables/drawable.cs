@@ -17,15 +17,15 @@ namespace lab01
         public virtual bool IsDummy => false;
 
         public abstract void Delete();
-
-        public abstract void Move(MouseEventArgs e, Point distance, IRelation sanitizer, bool solo = true);
-        public virtual void PreMove()
+        public abstract void RespondToRelation(Relation rel);
+        public abstract void Move(MouseEventArgs e, Point distance, Relation sanitizer, MovingOpts mo);
+        public virtual void PreMove(MovingOpts mo)
         {
             this.DeregisterDrawable();
             designer.Canvas.Reprint();
             designer.Canvas.ErasePreview();
         }
-        public virtual void PostMove()
+        public virtual void PostMove(MovingOpts mo)
         {
             this.Register();
             designer.Canvas.Reprint();
@@ -41,11 +41,13 @@ namespace lab01
             designer.Canvas.EraseDrawable(this);
         }
 
-        public virtual void Print(Action<Action> how)
+        public virtual void Print(Action<Action> how, Brush brush)
         {
-            how(() => printer.PutPixels(this.Pixels, embellisher.DrawColor));
+            how(() => printer.PutPixels(this.Pixels, brush));
             printer.FlushBuffer();
         }
+
+        public virtual void Highlight(Action<Action> how, Brush brush) => this.Print(how, brush);
 
         public drawable(List<Point> _pixels, List<vertex> _vertices, Brush _brush)
         {

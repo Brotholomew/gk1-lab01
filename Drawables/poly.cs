@@ -33,26 +33,55 @@ namespace lab01
                 vertex.DeregisterDrawable();
         }
 
-        public override void Print(Action<Action> how)
+        public override void Print(Action<Action> how, Brush brush)
         {
             foreach (var line in this._Lines)
-                line.Print(how);
+                line.Print(how, brush);
 
             foreach (var vertex in this._Vertices)
-                vertex.Print(how);
+                vertex.Print(how, brush);
         }
 
-        public override void Move(MouseEventArgs e, Point distance, IRelation sanitizer, bool solo = true)
+        public override void Highlight(Action<Action> how, Brush brush)
+        {
+            how(() => printer.PutFigure(this, brush));
+            //base.Highlight(how, brush);
+        }
+
+        public override void PostMove(MovingOpts mo)
+        {
+            if (!mo.Stop)
+            {
+                mo.Stop = true;
+                designer.RelationSanitizer.PostMove(this, mo);
+            }
+
+            base.PostMove(mo);
+        }
+
+        public override void PreMove(MovingOpts mo)
+        {
+            if (!mo.Stop)
+            {
+                mo.Stop = true;
+                designer.RelationSanitizer.PreMove(this, mo);
+            }
+
+            base.PreMove(mo);
+        }
+
+        public override void Move(MouseEventArgs e, Point distance, Relation sanitizer, MovingOpts mo)
         {
             sanitizer.Sanitize(this, ref distance);
+            mo.Solo = false;
 
             foreach (var vertex in this._Vertices)
-                vertex.Move(e, distance, sanitizer, false);
+                vertex.Move(e, distance, sanitizer, mo);
 
             foreach (var line in this._Lines)
-                line.Move(e, distance, sanitizer, false);
+                line.Move(e, distance, sanitizer, mo);
 
-            this.Print(designer.Canvas.PrintToPreview);
+            this.Print(designer.Canvas.PrintToPreview, embellisher.DrawColor);
         }
 
         public override void Register()
@@ -75,10 +104,19 @@ namespace lab01
             designer.Canvas.EraseVertices(this.Vertices);
 
             foreach (var line in this._Lines)
+            {
                 designer.Canvas.EraseDrawable(line);
+                designer.RelationSanitizer.Delete(line);
+            }
 
+            designer.RelationSanitizer.Delete(this);
             designer.Canvas.Reprint();
             printer.Erase();
+        }
+
+        public override void RespondToRelation(Relation rel)
+        {
+            rel.SanitizePoly(this);
         }
     }
 }

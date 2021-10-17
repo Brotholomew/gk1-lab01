@@ -66,12 +66,18 @@ namespace lab01
 
         public void RegisterVertex(vertex v)
         {
+            if (this._VerticesHeap.Contains(v))
+                return;
+
             this.InitializePixels(v.Pixels, this._VertexMap, v);
             this._VerticesHeap.Add(v);
         }
 
         public void RegisterDrawable(drawable d)
         {
+            if (this._DrawablesHeap.Contains(d))
+                return;
+
             this.InitializePixels(d.Pixels, this._DrawableMap, d);
             this._DrawablesHeap.Add(d);
         }
@@ -89,22 +95,22 @@ namespace lab01
                 foreach (var v in this._VerticesHeap)
                     if (!this.Highlights.ContainsKey(v)) printer.PutVertex(v.Pixels[0], v.Brush);
 
-                foreach (var s in this.Highlights)
-                {
-                    if (s.Key is vertex)
-                        printer.PutVertex(s.Key.Pixels[0], s.Value);
-                    else
-                    {
-                        if (s.Key is line)
-                            printer.PutPixels(s.Key.Pixels, s.Value);
-                        else
-                        {
-                            printer.PutFigure(s.Key, s.Value);
-                            printer.PutPixels(s.Key.Pixels, s.Key.Brush);
-                        }
+                //foreach (var s in this.Highlights)
+                //{
+                //    if (s.Key is vertex)
+                //        printer.PutVertex(s.Key.Pixels[0], s.Value);
+                //    else
+                //    {
+                //        if (s.Key is line)
+                //            printer.PutPixels(s.Key.Pixels, s.Value);
+                //        else
+                //        {
+                //            printer.PutFigure(s.Key, s.Value);
+                //            printer.PutPixels(s.Key.Pixels, s.Key.Brush);
+                //        }
 
-                    }
-                }
+                //    }
+                //}
 
                 printer.FlushBuffer();
             });
@@ -128,12 +134,20 @@ namespace lab01
 
         public void PrintVertex(vertex v) => this.PrintToMain(() => printer.PutVertex(v.Pixels[0], v.Brush));
 
-        public void ErasePreview() => this._PreviewGraphics.Clear(Color.Transparent);
+        public void ErasePreview()
+        {
+            this._PreviewGraphics.Clear(Color.Transparent);
+            foreach (var t in designer.Highlighter.Highlights)
+                t.Item1.Highlight(this.PrintToPreview, t.Item2);
+        }
 
         public void EraseMain() => this._MainGraphics.Clear(Color.White);
 
         public void EraseDrawable(drawable d)
         {
+            if (!this._DrawablesHeap.Contains(d))
+                return;
+
             foreach (var pixel in d.Pixels)
                 this._DrawableMap[pixel].Remove(d);
 
@@ -142,6 +156,9 @@ namespace lab01
 
         public void EraseVertex(vertex v)
         {
+            if (!this._VerticesHeap.Contains(v))
+                return;
+
             this._VertexMap[v.Pixels[0]].Remove(v);
             this._VerticesHeap.Remove(v);
         }

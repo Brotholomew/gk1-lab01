@@ -33,6 +33,8 @@ namespace lab01
         private static RelationSanitizer _RelationSanitizer = new RelationSanitizer();
         public static RelationSanitizer RelationSanitizer { get => designer._RelationSanitizer; }
 
+        public static Highlighter Highlighter = new Highlighter();
+
         public static void Initialize()
         {
             designer._Canvas = new Canvas();
@@ -52,9 +54,13 @@ namespace lab01
                 {
                     
                 }
-                printer.Erase();
-
-
+            }
+            else if (f.DM == DesignModes.Moving)
+            {
+                designer.Canvas.ErasePreview();
+                drawable d = designer._Moving;
+                d.Move(e, Functors.Distance(e.Location, designer._LastPoint), designer.RelationSanitizer, new MovingOpts(_solo : true));
+                designer._LastPoint = e.Location;
             }
             else
             {
@@ -62,6 +68,7 @@ namespace lab01
                 designer.LastTracked = designer.Track(e.Location, embellisher.TrackColor);
             }
 
+            printer.Erase();
         }
 
         public static Canvas Canvas { 
@@ -73,8 +80,5 @@ namespace lab01
         } 
 
         private static double Distance(Point start, Point end) => Math.Sqrt(Math.Pow(start.X - end.X, 2) + Math.Pow(start.Y - end.Y, 2));
-
-        private static bool PointOnLine(double a, double b, Point p) => a * p.X + b == p.Y;
-        private static bool LineCrossesY(line l, Point p) => (p.X >= l.Start.X || p.X >= l.End.X) && (p.Y > l.Start.Y && p.Y < l.End.Y) || (p.Y < l.Start.Y && p.Y > l.End.Y); 
     }
 }

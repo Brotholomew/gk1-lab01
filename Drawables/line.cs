@@ -57,29 +57,31 @@ namespace lab01
                 p.Lines.Remove(this);
             }
 
+            designer.RelationSanitizer.Delete(this);
             designer.Canvas.EraseDrawable(this);
             designer.Canvas.Reprint();
             printer.Erase();
         }
 
-        public override void Move(MouseEventArgs e, Point distance, IRelation sanitizer, bool solo = true)
+        public override void Move(MouseEventArgs e, Point distance, Relation sanitizer, MovingOpts mo)
         {
             sanitizer.Sanitize(this, ref distance);
             Functors.MovePoints(this._Pixels, distance);
 
-            if (solo)
+            if (mo.Solo)
             {
+                mo.Solo = false;
                 foreach (var v in this._Vertices)
                 {
-                    v.Move(e, distance, sanitizer, false);
+                    v.Move(e, distance, sanitizer, mo);
                     v.GetNext(this).Reprint();
 
-                    this.Print(designer.Canvas.PrintToPreview);
+                    this.Print(designer.Canvas.PrintToPreview, embellisher.DrawColor);
                 }
             }
         }
 
-        public override void PostMove()
+        public override void PostMove(MovingOpts mo)
         {
             foreach (var v in this._Vertices)
             {
@@ -87,10 +89,15 @@ namespace lab01
                 v.Register();
             }
 
-            base.PostMove();
+            if (!mo.Stop)
+            {
+                mo.Stop = true;
+                designer.RelationSanitizer.PostMove(this, mo);
+            }
+            base.PostMove(mo);
         }
 
-        public override void PreMove()
+        public override void PreMove(MovingOpts mo)
         {
             foreach (var v in this._Vertices)
             {
@@ -98,7 +105,12 @@ namespace lab01
                 v.GetNext(this).DeregisterDrawable();
             }
 
-            base.PreMove();
+            if (!mo.Stop)
+            {
+                mo.Stop = true;
+                designer.RelationSanitizer.PreMove(this, mo);
+            }
+            base.PreMove(mo);
         }
 
         public void Reprint()
@@ -143,6 +155,11 @@ namespace lab01
 
             this.Vertices.Clear();
             this.Delete();
+        }
+
+        public override void RespondToRelation(Relation rel)
+        {
+            rel.SanitizeLine(this);
         }
     }
 

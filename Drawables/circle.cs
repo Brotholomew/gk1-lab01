@@ -67,13 +67,14 @@ namespace lab01
         {
             double d = Functors.RealDistance(e.Location, this.Vertices[0].Center);
             mo.Solo = false;
+            mo.CircleOpts = false;
 
             if (d >= this.Radius - 10)
             {
                 // on circle rim
                 mo.CircleOpts = true;
                 sanitizer.Sanitize(this, ref distance, mo);
-                this.radius = (int)Math.Ceiling(d);
+                if (distance.X != 0 && distance.Y != 0) this.radius = (int)Math.Ceiling(d);
                 circle temp = designer._DrawCircle(this.Vertices[0], this.radius, embellisher.DrawColor);
                 this._Pixels = temp.Pixels;
             }

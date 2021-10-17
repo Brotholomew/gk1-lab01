@@ -120,6 +120,8 @@ namespace lab01
             DeleteButton.Enabled = false;
             AddVertexButton.Enabled = false;
             FixedLengthButton.Enabled = false;
+            FixedRadiusButton.Enabled = false;
+            FixedCenterButton.Enabled = false;
 
             if (designer.Tracked.Count == 1)
             {
@@ -129,6 +131,12 @@ namespace lab01
                 {
                     AddVertexButton.Enabled = true;
                     FixedLengthButton.Enabled = true;
+                }
+
+                if (designer.Tracked[0] is circle)
+                {
+                    FixedRadiusButton.Enabled = true;
+                    FixedCenterButton.Enabled = true;
                 }
             } 
         }
@@ -165,6 +173,20 @@ namespace lab01
         private void MouseClickFixedLengthButton(object sender, MouseEventArgs e)
         {
             designer.RelationSanitizer.AddRelation(new FixedLength((line)designer.Tracked[0]));
+            designer.Tracked.Clear();
+            this.UpdateButtons();
+        }
+
+        private void MouseClickFixedRadiusButton(object sender, MouseEventArgs e)
+        {
+            designer.RelationSanitizer.AddRelation(new FixedRadius((circle)designer.Tracked[0]));
+            designer.Tracked.Clear();
+            this.UpdateButtons();
+        }
+
+        private void MouseClickFixedCenterButton(object sender, MouseEventArgs e)
+        {
+            designer.RelationSanitizer.AddRelation(new FixedCenter((circle)designer.Tracked[0]));
             designer.Tracked.Clear();
             this.UpdateButtons();
         }

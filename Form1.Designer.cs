@@ -37,7 +37,9 @@ namespace lab01
             this.AddVertexButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.FixedRadiusButton = new System.Windows.Forms.Button();
             this.FixedLengthButton = new System.Windows.Forms.Button();
+            this.FixedCenterButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -124,23 +126,45 @@ namespace lab01
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.FixedCenterButton);
+            this.groupBox3.Controls.Add(this.FixedRadiusButton);
             this.groupBox3.Controls.Add(this.FixedLengthButton);
             this.groupBox3.Location = new System.Drawing.Point(707, 227);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(200, 100);
+            this.groupBox3.Size = new System.Drawing.Size(200, 153);
             this.groupBox3.TabIndex = 4;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Relations";
+            // 
+            // FixedRadiusButton
+            // 
+            this.FixedRadiusButton.Location = new System.Drawing.Point(7, 61);
+            this.FixedRadiusButton.Name = "FixedRadiusButton";
+            this.FixedRadiusButton.Size = new System.Drawing.Size(186, 35);
+            this.FixedRadiusButton.TabIndex = 1;
+            this.FixedRadiusButton.Text = "fixed radius";
+            this.FixedRadiusButton.UseVisualStyleBackColor = true;
+            this.FixedRadiusButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseClickFixedRadiusButton);
             // 
             // FixedLengthButton
             // 
             this.FixedLengthButton.Location = new System.Drawing.Point(7, 23);
             this.FixedLengthButton.Name = "FixedLengthButton";
-            this.FixedLengthButton.Size = new System.Drawing.Size(186, 31);
+            this.FixedLengthButton.Size = new System.Drawing.Size(186, 32);
             this.FixedLengthButton.TabIndex = 0;
             this.FixedLengthButton.Text = "fixed length";
             this.FixedLengthButton.UseVisualStyleBackColor = true;
             this.FixedLengthButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseClickFixedLengthButton);
+            // 
+            // FixedCenterButton
+            // 
+            this.FixedCenterButton.Location = new System.Drawing.Point(7, 103);
+            this.FixedCenterButton.Name = "FixedCenterButton";
+            this.FixedCenterButton.Size = new System.Drawing.Size(75, 23);
+            this.FixedCenterButton.TabIndex = 2;
+            this.FixedCenterButton.Text = "fixed center";
+            this.FixedCenterButton.UseVisualStyleBackColor = true;
+            this.FixedCenterButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseClickFixedCenterButton);
             // 
             // mainForm
             // 
@@ -172,6 +196,8 @@ namespace lab01
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Button FixedLengthButton;
+        private System.Windows.Forms.Button FixedRadiusButton;
+        private System.Windows.Forms.Button FixedCenterButton;
     }
 }
 

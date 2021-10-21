@@ -25,6 +25,23 @@ namespace lab01
         public virtual void PostMove(circle c, MovingOpts mo) { }
         public virtual void PostMove(vertex v, MovingOpts mo) { }
 
+        protected List<drawable> _Break = new List<drawable>();
+        protected void StackOverflowControl(Action a, drawable d)
+        {
+            this._Break.Add(d);
+            a.Invoke();
+            this._Break.Remove(d);
+        }
+
+        protected void StackOverflowControl(Action a, List<drawable> ld)
+        {
+            this._Break.AddRange(ld);
+            a.Invoke();
+
+            foreach (var _d in ld)
+                this._Break.Remove(_d);           
+        }
+
         public virtual bool IsBoundWith(drawable d) => false;
     }
 }

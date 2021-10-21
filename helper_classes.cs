@@ -59,7 +59,10 @@ namespace lab01
             Point start = l.Start;
             Point end = l.End;
 
-            double a = (double)(end.Y - start.Y) / (double)(end.X - start.X);
+            double a = double.PositiveInfinity;
+            if (Math.Abs(l.Start.X - l.End.X) > 5) 
+                a = (double)(end.Y - start.Y) / (double)(end.X - start.X);
+            
             double b = start.Y - a * start.X;
 
             return new LineVariables(a, b);

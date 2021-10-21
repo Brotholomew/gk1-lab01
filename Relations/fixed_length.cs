@@ -31,7 +31,8 @@ namespace lab01
 
         public override void Sanitize(drawable d, ref Point distance, MovingOpts mo)
         {
-            if (mo.Stop) return;
+            // if (mo.Stop) return;
+            if (this._Break.Contains(d)) return;
 
             d.RespondToRelation(this);
         }
@@ -40,21 +41,22 @@ namespace lab01
         {
             if (!v.IsAdjacent(this._Drawable)) return;
             if (this._Drawable.MovingSimultaneously) return;
+            this.StackOverflowControl(() => this._Drawable.Rescale(this._Length, v), this._Drawable.GetNext(v));
 
-            vertex vx = this._Drawable.GetNext(v);
-            double newLength = Functors.RealDistance(vx.Center, v.Center);
+            //vertex vx = this._Drawable.GetNext(v);
+            //double newLength = Functors.RealDistance(vx.Center, v.Center);
 
-            Point d = Functors.Distance(vx.Center, v.Center);
-            double scale = newLength / this._Length;
+            //Point d = Functors.Distance(vx.Center, v.Center);
+            //double scale = newLength / this._Length;
 
-            Point np = new Point((int)(v.Center.X + d.X * scale), (int)(v.Center.Y + d.Y * scale));
-            Point distance = Functors.Distance(vx.Center, np);
+            //Point np = new Point((int)(v.Center.X + d.X * scale), (int)(v.Center.Y + d.Y * scale));
+            //Point distance = Functors.Distance(vx.Center, np);
 
-            if (distance.X != 0 || distance.Y != 0)
-            {
-                // move the other vertex to match the fixed length
-                vx.Move(null, distance, designer.RelationSanitizer, new MovingOpts(_solo: true, _stop: true));
-            }
+            //if (distance.X != 0 || distance.Y != 0)
+            //{
+            //    // move the other vertex to match the fixed length
+            //    vx.Move(null, distance, designer.RelationSanitizer, new MovingOpts(_solo: true, _stop: true));
+            //}
         }
 
         //public override void SanitizeLine(line l) 

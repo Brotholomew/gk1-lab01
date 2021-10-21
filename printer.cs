@@ -77,5 +77,11 @@ namespace lab01
             printer.CanvasWrapper.Invalidate();
             printer.CanvasWrapper.Update();
         }
+
+        #region debug
+
+        public static void ShowDebugMsg(string str) => printer.Canvas.DrawString(str, SystemFonts.DefaultFont, Brushes.Black, new Point(15, 15));
+
+        #endregion
     }
 }

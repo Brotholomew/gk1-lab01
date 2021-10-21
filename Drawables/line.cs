@@ -11,7 +11,7 @@ namespace lab01
         private Point _Start;
         private Point _End;
 
-        public bool _MovingSimultaneously = false;
+        private bool _MovingSimultaneously = false;
         public bool MovingSimultaneously
         {
             get
@@ -20,8 +20,12 @@ namespace lab01
             }
         }
 
+        public bool PolyMoving { get => this.Poly.MovingSimultaneously; }
+
         public Point Start { get => this.Vertices[0].Center; }
         public Point End { get => this.Vertices[1].Center; }
+        public double Length { get => Functors.RealDistance(this.Start, this.End); }
+        private double _OldLength;
 
         public poly Poly;
         public line(Point _start, Point _end, List<Point> _pixels, Brush _brush) : base(_pixels, new List<vertex>(), _brush)
@@ -93,11 +97,7 @@ namespace lab01
         public override void PostMove(MovingOpts mo)
         {
             foreach (var v in this._Vertices)
-            {
                 v.PostMove(mo);
-                //v.GetNext(this).Register();
-                //v.Register();
-            }
 
             if (!mo.Stop)
             {
@@ -111,12 +111,11 @@ namespace lab01
 
         public override void PreMove(MovingOpts mo)
         {
+            this._OldLength = this.Length;
+
+            if (mo.Solo) this._MovingSimultaneously = true;
             foreach (var v in this._Vertices)
-            {
                 v.PreMove(mo);
-                //v.DeregisterDrawable();
-                //v.GetNext(this).DeregisterDrawable();
-            }
 
             if (!mo.Stop)
             {
@@ -124,7 +123,6 @@ namespace lab01
                 designer.RelationSanitizer.PreMove(this, mo);
             }
 
-            this._MovingSimultaneously = true;
             base.PreMove(mo);
         }
 
@@ -148,7 +146,7 @@ namespace lab01
             Point midpoint = Functors.Midpoint(this.Start, this.End);
             vertex v = designer.DrawVertex(midpoint, embellisher.VertexBrush);
 
-            this.Poly.Vertices.Add(v);
+            this.Poly.AddVertex(this.Vertices[0], v);
 
             List<vertex> temp = new List<vertex>();
             foreach (var vx in this.Vertices)
@@ -192,6 +190,95 @@ namespace lab01
 
             return null;
         }
+
+        public void Rescale(double length, vertex v = null)
+        {
+            if (v == null)
+                v = this.Vertices[0];
+
+            vertex vx = this.GetNext(v);
+            double newLength = Functors.RealDistance(vx.Center, v.Center);
+
+            Point d = Functors.Distance(vx.Center, v.Center);
+            //double scale = newLength / length;
+            double scale = length / newLength;
+
+            if (newLength == 0)
+                scale = length;
+
+            Point np = new Point((int)(v.Center.X + d.X * scale), (int)(v.Center.Y + d.Y * scale));
+            Point distance = Functors.Distance(np, vx.Center);
+
+            if (distance.X == double.PositiveInfinity || distance.Y == double.NegativeInfinity || scale == double.PositiveInfinity || scale == double.NegativeInfinity)
+                printer.ShowDebugMsg("");
+
+            vx.Move(null, distance, designer.RelationSanitizer, new MovingOpts(_solo: true, _stop: false));
+            v.Move(null, new Point(0,0), designer.RelationSanitizer, new MovingOpts(_solo: true, _stop: false));
+        }
+
+        public void MakeParallel(line l, double oldLength)
+        {
+            double prevL = this.Length;
+            double prevR = l.Length;
+
+            LineVariables pattern = Functors.GetLineVariables(l);
+            LineVariables L = Functors.GetLineVariables(this);
+
+            vertex oldv0 = this.Start.Y <= this.End.Y ? this.Vertices[0] : this.Vertices[1];
+            vertex oldv1 = this.Start.Y <= this.End.Y ? this.Vertices[1] : this.Vertices[0];
+            Point oldStart = oldv0.Center;
+            Point oldEnd = oldv1.Center;
+            //double a = (oldEnd.Y - oldStart.y)
+
+            int nXE = oldEnd.X, nYE = oldEnd.Y;
+            int nXS = oldStart.X, nYS = oldStart.Y;
+            double b = 0;
+            Action improve = (() => { });
+
+            if (L.a != pattern.a || !(double.IsInfinity(L.a) && double.IsInfinity(pattern.a)))
+            {
+                double a = pattern.a;
+                if (double.IsInfinity(L.a))
+                {
+                    nXE = oldStart.X + (l.End.X - l.Start.X);
+                    nXS = oldEnd.X + (l.End.X - l.Start.X);
+                    a = pattern.a;
+                }
+                else if (double.IsInfinity(pattern.a))
+                {
+                    nXE = oldStart.X;
+                    nXS = oldEnd.X;
+                    a = L.a;
+                }
+                else
+                {
+                    nXE = (int) (this.Length * Math.Cos(Math.Atan(a)) + oldStart.X);
+                    nXS = (int) (this.Length * Math.Cos(Math.Atan(a)) + oldEnd.X);
+                }
+
+                b = oldStart.Y - a * oldStart.X;
+                nYE = (int) (a * nXE + b);
+            
+                b = oldEnd.Y - a * oldEnd.X;
+                nYS = (int) (a * nXS + b);
+
+                Point mE = Functors.Midpoint(oldStart, new Point(nXE, nYE));
+                Point mS = Functors.Midpoint(new Point(nXS, nYS), oldEnd);
+                Point m = Functors.Midpoint(l.Start, l.End);
+
+                if (Functors.RealDistance(mS, m) <= Functors.RealDistance(mE, m))
+                { nXE = oldEnd.X; nYE = oldEnd.Y; improve = () => this.Rescale(this._OldLength, oldv0); }
+                else 
+                { nXS = oldStart.X; nYS = oldStart.Y; improve = () => this.Rescale(this._OldLength, oldv1); }
+            }
+
+            oldv1.Move(null, Functors.Distance(new Point(nXE, nYE), oldEnd), designer.RelationSanitizer, new MovingOpts(_solo: true, _stop: false));
+            oldv0.Move(null, Functors.Distance(new Point(nXS, nYS), oldStart), designer.RelationSanitizer, new MovingOpts(_solo: true, _stop: false));
+            improve.Invoke();
+
+            printer.ShowDebugMsg($"moved line length: b - {prevL}, a - {this.Length}; other line: b - {prevR}, a - {l.Length}");
+        }
+
     }
 
 }

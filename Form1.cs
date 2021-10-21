@@ -122,6 +122,8 @@ namespace lab01
             FixedLengthButton.Enabled = false;
             FixedRadiusButton.Enabled = false;
             FixedCenterButton.Enabled = false;
+            EqualLengthsButton.Enabled = false;
+            ParallelButton.Enabled = false;
 
             if (designer.Tracked.Count == 1)
             {
@@ -139,6 +141,15 @@ namespace lab01
                     FixedCenterButton.Enabled = true;
                 }
             } 
+
+            if (designer.Tracked.Count == 2)
+            {
+                if (designer.Tracked[0] is line && designer.Tracked[1] is line)
+                {
+                    EqualLengthsButton.Enabled = true;
+                    ParallelButton.Enabled = true;
+                }
+            }
         }
 
         private void MouseClickDeleteButton(object sender, MouseEventArgs e)
@@ -187,6 +198,20 @@ namespace lab01
         private void MouseClickFixedCenterButton(object sender, MouseEventArgs e)
         {
             designer.RelationSanitizer.AddRelation(new FixedCenter((circle)designer.Tracked[0]));
+            designer.Tracked.Clear();
+            this.UpdateButtons();
+        }
+
+        private void MouseClickEqualLengthsButton(object sender, MouseEventArgs e)
+        {
+            designer.RelationSanitizer.AddRelation(new EqualLenghts(designer.Tracked.ConvertAll((drawable d) => (line)d)));
+            designer.Tracked.Clear();
+            this.UpdateButtons();
+        }
+
+        private void MoouseClickParallelEdges(object sender, MouseEventArgs e)
+        {
+            designer.RelationSanitizer.AddRelation(new ParallelEdges(designer.Tracked.ConvertAll((drawable d) => (line)d)));
             designer.Tracked.Clear();
             this.UpdateButtons();
         }

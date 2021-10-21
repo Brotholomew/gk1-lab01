@@ -45,6 +45,7 @@ namespace lab01
                 foreach (var line in this.AdjacentLines)
                     ((line)line).Reprint();
             }
+
             sanitizer.Sanitize(this, ref distance, mo);
         }
 

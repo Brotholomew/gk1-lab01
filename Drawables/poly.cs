@@ -25,6 +25,12 @@ namespace lab01
             }
         }
 
+        public void AddVertex(vertex pre, vertex v)
+        {
+            int pre_idx = this.Vertices.FindLastIndex((vertex v) => v == pre);
+            this.Vertices.Insert(pre_idx, v);
+        }
+
         public override void DeregisterDrawable()
         {
             foreach (var line in this._Lines)

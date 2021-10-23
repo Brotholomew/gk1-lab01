@@ -34,16 +34,18 @@ namespace lab01
 
         public override void Move(MouseEventArgs e, Point distance, Relation sanitizer, MovingOpts mo)
         {
+            // sanitizer.Sanitize(this, ref distance, mo);
+            
             this._Pixels.Clear();
            
             this.p = Functors.MovePoint(this.p, distance);
             this._Pixels.Add(this.p);
-            this.Print(designer.Canvas.PrintToPreview, embellisher.DrawColor);
+            this.Print(designer.Canvas.PrintToPreview, embellisher.VertexBrush);
 
             if (mo.Solo)
             {
-                foreach (var line in this.AdjacentLines)
-                    ((line)line).Reprint();
+                foreach (var d in this._Drawables)
+                    d.Reprint(distance.X, distance.Y);
             }
 
             sanitizer.Sanitize(this, ref distance, mo);
@@ -51,28 +53,22 @@ namespace lab01
 
         public override void PostMove(MovingOpts mo)
         {
-            foreach (var line in this._Drawables.ConvertAll((drawable d) => (line)d))
-                line.Register();
+            foreach (var line in this._Drawables)
+                line.PostMove(new MovingOpts(_stop: true));
 
-            if (!mo.Stop)
-            {
-                mo.Stop = true;
-                designer.RelationSanitizer.PostMove(this, mo);
-            }
+            //mo.Stop = true;
+            designer.RelationSanitizer.PostMove(this, mo);
 
             base.PostMove(mo);
         }
 
         public override void PreMove(MovingOpts mo)
         {
-            foreach (var line in this._Drawables.ConvertAll((drawable d) => (line)d))
-                line.DeregisterDrawable();
+            foreach (var line in this._Drawables)
+                line.PreMove(new MovingOpts(_stop: true));
 
-            if (!mo.Stop)
-            {
-                mo.Stop = true;
-                designer.RelationSanitizer.PreMove(this, mo);
-            }
+            //mo.Stop = true;
+            designer.RelationSanitizer.PreMove(this, mo);            
 
             base.PreMove(mo);
         }

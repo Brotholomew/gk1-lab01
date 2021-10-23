@@ -49,6 +49,15 @@ namespace lab01
                 vertex.Print(how, brush);
         }
 
+        public override void Reprint(int nx = 0, int ny = 0)
+        {
+            foreach (var line in this._Lines)
+                line.Print(designer.Canvas.PrintToPreview, embellisher.DrawColor);
+
+            foreach (var vertex in this._Vertices)
+                vertex.Print(designer.Canvas.PrintToPreview, embellisher.VertexBrush);
+        }
+
         public override void Highlight(Action<Action> how, Brush brush)
         {
             how(() => printer.PutFigure(this, brush));
@@ -59,7 +68,7 @@ namespace lab01
         {
             if (!mo.Stop)
             {
-                mo.Stop = true;
+               // mo.Stop = true;
                 designer.RelationSanitizer.PostMove(this, mo);
             }
 
@@ -71,7 +80,7 @@ namespace lab01
         {
             if (!mo.Stop)
             {
-                mo.Stop = true;
+                //mo.Stop = true;
                 designer.RelationSanitizer.PreMove(this, mo);
             }
 

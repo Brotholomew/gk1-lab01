@@ -74,12 +74,14 @@ namespace lab01
         public bool Solo;
         public bool Stop;
         public bool CircleOpts;
+        public bool CircleVMoving;
 
-        public MovingOpts(bool _solo = true, bool _stop = false, bool _circleOpts = false)
+        public MovingOpts(bool _solo = true, bool _stop = false, bool _circleOpts = false, bool _circleVMoving = false)
         {
             this.Solo = _solo;
             this.Stop = _stop;
             this.CircleOpts = _circleOpts;
+            this.CircleVMoving = _circleVMoving;
         }
     }
 
@@ -92,6 +94,149 @@ namespace lab01
         {
             this.a = _a;
             this.b = _b;
+        }
+    }
+
+    public class LineSlopeEquation
+    {
+        private double _a;
+        private double _b;
+
+        public double a { get => this._a; }
+        public double b { get => this._b; }
+
+        public LineSlopeEquation(line l) => this.Init(LineSlopeEquation.GetLineSlopeEquation(l));
+
+        public LineSlopeEquation(LineVariables l) => this.Init(l);
+
+        private void Init(LineVariables l)
+        {
+            this._a = l.a;
+            this._b = l.b;
+        }
+
+        public void Shift(double db) => this._b += db;
+
+        public LineVariables GetLineShifted(double db) => new LineVariables(this._a, this._b + db);
+        
+        public static LineVariables GetLineSlopeEquation(line l)
+        {
+            Point start = l.Start;
+            Point end = l.End;
+
+            double a = double.PositiveInfinity;
+            if (Math.Abs(l.Start.X - l.End.X) > 5)
+                a = (double)(end.Y - start.Y) / (double)(end.X - start.X);
+
+            double b = start.Y - a * start.X;
+
+            return new LineVariables(a, b);
+        }
+    }
+
+    public class LineNormalEquation
+    {
+        private double _A;
+        private double _B;
+        private double _C;
+
+        public double A { get => this._A; }
+        public double B { get => this._B; }
+        public double C { get => this._C; }
+        public double rC 
+        { 
+            get 
+            { 
+                if (double.IsInfinity(this._A)) 
+                    return (-1) * this._C; 
+                else 
+                    return this._C; 
+            } 
+        }
+
+        public LineNormalEquation(double _A, double _B, double _C) => this.Init(_A, _B, _C);
+
+        public LineNormalEquation(LineVariables l, Point p)
+        {
+            this.Init(l);
+
+            if (double.IsInfinity(l.a))
+                this._C = (-1) * p.X;
+        }
+
+        public LineNormalEquation(line l)
+        {
+            this.Init(LineSlopeEquation.GetLineSlopeEquation(l));
+
+            if (double.IsInfinity(this._A))
+                this._C = (-1) * l.Vertices[0].Center.X;
+        }
+        public double DistanceFrom(Point p)
+        {
+            double d = 0;
+            double denominator = Math.Sqrt(Math.Pow(this._A, 2) + Math.Pow(this._B, 2));
+
+            if (double.IsInfinity(this._A))
+                return Math.Abs((-1) * this._C - p.X);
+
+            if (denominator != 0)
+                d = Math.Abs(this._A * p.X + this._B * p.Y + this._C) / denominator;
+
+            return d;
+        }
+
+        public double GetC(Point p)
+        {
+            if (double.IsInfinity(this._A))
+                return (-1) * p.X;
+
+            return (-1) * (this._A * p.X + this._B * p.Y);
+        }
+
+        public double GetPerpendicularSlope()
+        {
+            if (double.IsInfinity(this._A))
+                return 0;
+
+            return (-1) * this._A;
+        }
+
+        public static (LineNormalEquation, LineNormalEquation) GetMovedLine(double r, double A, double B, double C)
+        {;
+            double c0 = C - r * Math.Sqrt(Math.Pow(A, 2) + Math.Pow(B, 2));
+            double c1 = C - (-1) * r * Math.Sqrt(Math.Pow(A, 2) + Math.Pow(B, 2));
+
+            if (double.IsInfinity(A))
+            {
+                c0 = C + r;
+                c1 = C - r;
+            }
+
+            LineNormalEquation l0 = new LineNormalEquation(A, B, c0);
+            LineNormalEquation l1 = new LineNormalEquation(A, B, c1);
+
+            return (l0, l1);
+        }
+
+        private void Init(double _A, double _B, double _C)
+        {
+            this._A = _A;
+            this._B = _B;
+            this._C = _C;
+        }
+
+        private void Init(LineVariables l) => this.Init(l.a, -1, l.b);
+        public LineVariables GetSlopeEquation() => new LineVariables((-1) * this._A / this._B, (-1) * this._C / this._B);
+
+        public static Point Intersection(LineNormalEquation L1, LineNormalEquation L2)
+        {
+            LineVariables l1 = L1.GetSlopeEquation();
+            LineVariables l2 = L2.GetSlopeEquation();
+
+            int x = (int)((l2.b - l1.b) / (l1.a - l2.a));
+            int y = (int)(l1.a * x + l1.b);
+            
+            return new Point(x, y);
         }
     }
 }

@@ -97,13 +97,10 @@ namespace lab01
         public override void PostMove(MovingOpts mo)
         {
             foreach (var v in this._Vertices)
-                v.PostMove(mo);
+                if (!mo.Stop) v.PostMove(mo);
 
-            if (!mo.Stop)
-            {
-                mo.Stop = true;
-                designer.RelationSanitizer.PostMove(this, mo);
-            }
+            //mo.Stop = true;
+            designer.RelationSanitizer.PostMove(this, mo);
 
             this._MovingSimultaneously = false;
             base.PostMove(mo);
@@ -115,24 +112,24 @@ namespace lab01
 
             if (mo.Solo) this._MovingSimultaneously = true;
             foreach (var v in this._Vertices)
-                v.PreMove(mo);
+                if (!mo.Stop) v.PreMove(mo);
 
-            if (!mo.Stop)
-            {
-                mo.Stop = true;
-                designer.RelationSanitizer.PreMove(this, mo);
-            }
+            //mo.Stop = true;
+            designer.RelationSanitizer.PreMove(this, mo);
 
             base.PreMove(mo);
         }
 
-        public void Reprint()
+        public override void Reprint(int nx = 0, int ny = 0)
         {
             this.UpdatePoints();
 
             line temp = null;
             designer.Canvas.PrintToPreview(() => temp = designer.DrawLine(this.Vertices[0].Center, this.Vertices[1].Center, embellisher.DrawColor));
             this._Pixels = temp._Pixels;
+
+            Point dummy = new Point(0, 0);
+            designer.RelationSanitizer.Sanitize(this, ref dummy, new MovingOpts());
         }
 
         private void UpdatePoints()
@@ -209,9 +206,6 @@ namespace lab01
             Point np = new Point((int)(v.Center.X + d.X * scale), (int)(v.Center.Y + d.Y * scale));
             Point distance = Functors.Distance(np, vx.Center);
 
-            if (distance.X == double.PositiveInfinity || distance.Y == double.NegativeInfinity || scale == double.PositiveInfinity || scale == double.NegativeInfinity)
-                printer.ShowDebugMsg("");
-
             vx.Move(null, distance, designer.RelationSanitizer, new MovingOpts(_solo: true, _stop: false));
             v.Move(null, new Point(0,0), designer.RelationSanitizer, new MovingOpts(_solo: true, _stop: false));
         }
@@ -275,8 +269,6 @@ namespace lab01
             oldv1.Move(null, Functors.Distance(new Point(nXE, nYE), oldEnd), designer.RelationSanitizer, new MovingOpts(_solo: true, _stop: false));
             oldv0.Move(null, Functors.Distance(new Point(nXS, nYS), oldStart), designer.RelationSanitizer, new MovingOpts(_solo: true, _stop: false));
             improve.Invoke();
-
-            printer.ShowDebugMsg($"moved line length: b - {prevL}, a - {this.Length}; other line: b - {prevR}, a - {l.Length}");
         }
 
     }

@@ -37,11 +37,12 @@ namespace lab01
             this.AddVertexButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.ParallelButton = new System.Windows.Forms.Button();
             this.EqualLengthsButton = new System.Windows.Forms.Button();
             this.FixedCenterButton = new System.Windows.Forms.Button();
             this.FixedRadiusButton = new System.Windows.Forms.Button();
             this.FixedLengthButton = new System.Windows.Forms.Button();
-            this.ParallelButton = new System.Windows.Forms.Button();
+            this.AdjacentCircleButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -128,6 +129,7 @@ namespace lab01
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.AdjacentCircleButton);
             this.groupBox3.Controls.Add(this.ParallelButton);
             this.groupBox3.Controls.Add(this.EqualLengthsButton);
             this.groupBox3.Controls.Add(this.FixedCenterButton);
@@ -135,10 +137,20 @@ namespace lab01
             this.groupBox3.Controls.Add(this.FixedLengthButton);
             this.groupBox3.Location = new System.Drawing.Point(707, 227);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(200, 274);
+            this.groupBox3.Size = new System.Drawing.Size(200, 287);
             this.groupBox3.TabIndex = 4;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Relations";
+            // 
+            // ParallelButton
+            // 
+            this.ParallelButton.Location = new System.Drawing.Point(7, 187);
+            this.ParallelButton.Name = "ParallelButton";
+            this.ParallelButton.Size = new System.Drawing.Size(186, 38);
+            this.ParallelButton.TabIndex = 4;
+            this.ParallelButton.Text = "parallel edges";
+            this.ParallelButton.UseVisualStyleBackColor = true;
+            this.ParallelButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MoouseClickParallelEdges);
             // 
             // EqualLengthsButton
             // 
@@ -180,15 +192,15 @@ namespace lab01
             this.FixedLengthButton.UseVisualStyleBackColor = true;
             this.FixedLengthButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseClickFixedLengthButton);
             // 
-            // ParallelButton
+            // AdjacentCircleButton
             // 
-            this.ParallelButton.Location = new System.Drawing.Point(7, 187);
-            this.ParallelButton.Name = "ParallelButton";
-            this.ParallelButton.Size = new System.Drawing.Size(186, 38);
-            this.ParallelButton.TabIndex = 4;
-            this.ParallelButton.Text = "parallel edges";
-            this.ParallelButton.UseVisualStyleBackColor = true;
-            this.ParallelButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MoouseClickParallelEdges);
+            this.AdjacentCircleButton.Location = new System.Drawing.Point(7, 232);
+            this.AdjacentCircleButton.Name = "AdjacentCircleButton";
+            this.AdjacentCircleButton.Size = new System.Drawing.Size(186, 39);
+            this.AdjacentCircleButton.TabIndex = 5;
+            this.AdjacentCircleButton.Text = "adjacent circle";
+            this.AdjacentCircleButton.UseVisualStyleBackColor = true;
+            this.AdjacentCircleButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseClickAdjacentCircleButton);
             // 
             // mainForm
             // 
@@ -224,6 +236,7 @@ namespace lab01
         private System.Windows.Forms.Button FixedCenterButton;
         private System.Windows.Forms.Button EqualLengthsButton;
         private System.Windows.Forms.Button ParallelButton;
+        private System.Windows.Forms.Button AdjacentCircleButton;
     }
 }
 

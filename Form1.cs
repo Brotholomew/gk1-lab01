@@ -31,6 +31,7 @@ namespace lab01
             designer.Initialize();
             printer.SetGraphics(designer.Canvas.PreviewGraphics);
             this.UpdateButtons();
+            this.PutUpPredefinedScene();
         }
 
         private void clickButtonLineDraw(object sender, EventArgs e)
@@ -124,6 +125,7 @@ namespace lab01
             FixedCenterButton.Enabled = false;
             EqualLengthsButton.Enabled = false;
             ParallelButton.Enabled = false;
+            AdjacentCircleButton.Enabled = false;
 
             if (designer.Tracked.Count == 1)
             {
@@ -149,6 +151,10 @@ namespace lab01
                     EqualLengthsButton.Enabled = true;
                     ParallelButton.Enabled = true;
                 }
+
+                if ((designer.Tracked[0] is line && designer.Tracked[1] is circle) ||
+                    (designer.Tracked[0] is circle && designer.Tracked[1] is line))
+                    AdjacentCircleButton.Enabled = true;
             }
         }
 
@@ -214,6 +220,57 @@ namespace lab01
             designer.RelationSanitizer.AddRelation(new ParallelEdges(designer.Tracked.ConvertAll((drawable d) => (line)d)));
             designer.Tracked.Clear();
             this.UpdateButtons();
+        }
+
+        private void MouseClickAdjacentCircleButton(object sender, MouseEventArgs e)
+        {
+            circle c = null;
+            line l = null;
+            foreach (var d in designer.Tracked)
+            {
+                if (d is line) l = (line)d;
+                if (d is circle) c = (circle)d;
+            }
+
+            designer.RelationSanitizer.AddRelation(new AdjacentCircle(c, l));
+            designer.Tracked.Clear();
+            this.UpdateButtons();
+        }
+
+        private void PutUpPredefinedScene()
+        {
+            Point pc = new Point(450, 100);
+            Point pp1 = new Point(450, 300);
+            Point pp2 = new Point(500, 400);
+            Point pp3 = new Point(300, 450);
+
+            vertex cv = new vertex(pc, new List<Point> { pc }, embellisher.VertexBrush);
+            vertex p1 = new vertex(pp1, new List<Point> { pp1 }, embellisher.VertexBrush);
+            vertex p2 = new vertex(pp2, new List<Point> { pp2 }, embellisher.VertexBrush);
+            vertex p3 = new vertex(pp3, new List<Point> { pp3 }, embellisher.VertexBrush);
+
+            line l1 = designer.DrawLine(pp1, pp2, embellisher.DrawColor);
+            line l2 = designer.DrawLine(pp2, pp3, embellisher.DrawColor);
+            line l3 = designer.DrawLine(pp3, pp1, embellisher.DrawColor);
+
+            l1.AddVertex(p1); l1.AddVertex(p2);
+            l2.AddVertex(p2); l2.AddVertex(p3);
+            l3.AddVertex(p3); l3.AddVertex(p1);
+
+            p1.AddLine(l1); p1.AddLine(l3);
+            p2.AddLine(l1); p2.AddLine(l2);
+            p3.AddLine(l2); p3.AddLine(l3);
+
+            circle c = designer._DrawCircle(cv, 75, embellisher.DrawColor);
+            poly p = new poly(new List<drawable> { l1, l2, l3 }, new List<vertex> { p1, p2, p3 });
+
+            l1.Poly = p; l2.Poly = p; l3.Poly = p;
+            cv.AdjacentLines.Add(c);
+
+            c.Register();
+            p.Register();
+
+            designer.Canvas.Reprint();
         }
     }
 }

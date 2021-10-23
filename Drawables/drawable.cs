@@ -34,6 +34,10 @@ namespace lab01
             printer.Erase();
         }
 
+        public virtual bool OnCircleRim(MouseEventArgs e) => false;
+
+        public virtual void Reprint(int nx = 0, int ny = 0) { }
+
         public virtual void Register() => designer.Canvas.RegisterDrawable(this);
 
         public virtual void DeregisterDrawable()

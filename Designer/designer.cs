@@ -59,7 +59,7 @@ namespace lab01
             {
                 designer.Canvas.ErasePreview();
                 drawable d = designer._Moving;
-                d.Move(e, Functors.Distance(e.Location, designer._LastPoint), designer.RelationSanitizer, new MovingOpts(_solo : true));
+                d.Move(e, Functors.Distance(e.Location, designer._LastPoint), designer.RelationSanitizer, new MovingOpts(_solo : true, _circleOpts : true));
                 designer._LastPoint = e.Location;
             }
             else

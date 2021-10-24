@@ -13,7 +13,14 @@ namespace lab01
         public FixedRadius(circle c)
         {
             this._Drawable = c;
-            this._Radius = c.Radius;
+
+            popup p = new popup((int)c.Radius, "radius");
+            p.ShowDialog();
+            this._Radius = p.Length;
+
+            c.PreMove(new MovingOpts());
+            c.Rescale(this._Radius);
+            c.PostMove(new MovingOpts());
         }
 
         public override List<(drawable, Brush)> GetHighlights()
@@ -23,17 +30,30 @@ namespace lab01
 
         public override List<((string, Point), Brush)> GetStrings()
         {
-            Point midpoint = Functors.Midpoint(this._Drawable.Vertices[0].Center, new Point(this._Drawable.Vertices[0].Center.X + this._Radius, this._Drawable.Vertices[0].Center.Y));
+            //Point midpoint = Functors.Midpoint(this._Drawable.Vertices[0].Center, new Point(this._Drawable.Vertices[0].Center.X + this._Radius, this._Drawable.Vertices[0].Center.Y));
 
-            return new List<((string, Point), Brush)> { (("fixed radius", midpoint), embellisher.FixedLengthHighlightBrush) };
+            return new List<((string, Point), Brush)> { (($"r = {this._Radius}", new Point(this._Drawable.Vertices[0].Center.X + 10, this._Drawable.Vertices[0].Center.Y - 5)), embellisher.VertexBrush) };
+        }
+
+        public override bool FixedRadiusEnabled(drawable d)
+        {
+            if (this.IsBoundWith(d))
+                return false;
+
+            return true;
+        }
+        public override bool FixedCenterEnabled(drawable d)
+        {
+            if (this.IsBoundWith(d))
+                return false;
+
+            return true;
         }
 
         public override void Sanitize(drawable d, ref Point distance, MovingOpts mo)
         {
             if (mo.Stop) return;
             if (d is circle && mo.CircleOpts) distance = new Point(0, 0);
-
-            d.RespondToRelation(this);
         }
 
         public override bool IsBoundWith(drawable d) => d == this._Drawable;

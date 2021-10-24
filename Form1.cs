@@ -126,6 +126,7 @@ namespace lab01
             EqualLengthsButton.Enabled = false;
             ParallelButton.Enabled = false;
             AdjacentCircleButton.Enabled = false;
+            DeleteRelationsButton.Enabled = false;
 
             if (designer.Tracked.Count == 1)
             {
@@ -134,26 +135,40 @@ namespace lab01
                 if (designer.Tracked[0] is line)
                 {
                     AddVertexButton.Enabled = true;
-                    FixedLengthButton.Enabled = true;
+                    
+                    if (designer.RelationSanitizer.FixedLengthEnabled(designer.Tracked[0]))
+                        FixedLengthButton.Enabled = true;
                 }
 
                 if (designer.Tracked[0] is circle)
                 {
-                    FixedRadiusButton.Enabled = true;
-                    FixedCenterButton.Enabled = true;
+                    if (designer.RelationSanitizer.FixedRadiusEnabled(designer.Tracked[0])) FixedRadiusButton.Enabled = true;
+                    if (designer.RelationSanitizer.FixedCenterEnabled(designer.Tracked[0])) FixedCenterButton.Enabled = true;
                 }
-            } 
+
+                if (designer.RelationSanitizer.HasRelations(designer.Tracked[0]))
+                    DeleteRelationsButton.Enabled = true;
+
+            }
 
             if (designer.Tracked.Count == 2)
             {
                 if (designer.Tracked[0] is line && designer.Tracked[1] is line)
                 {
-                    EqualLengthsButton.Enabled = true;
-                    ParallelButton.Enabled = true;
+                    if (designer.RelationSanitizer.EqualEnabled(designer.Tracked[0]) &&
+                        designer.RelationSanitizer.EqualEnabled(designer.Tracked[1]))
+                        EqualLengthsButton.Enabled = true;
+
+                    if (designer.RelationSanitizer.ParallelEnabled(designer.Tracked[0]) &&
+                        designer.RelationSanitizer.ParallelEnabled(designer.Tracked[1]) &&
+                        !((line)designer.Tracked[0]).IsAdjacent((line)designer.Tracked[1]))
+                        ParallelButton.Enabled = true;
                 }
 
                 if ((designer.Tracked[0] is line && designer.Tracked[1] is circle) ||
                     (designer.Tracked[0] is circle && designer.Tracked[1] is line))
+                    if (designer.RelationSanitizer.AdjacentEnabled(designer.Tracked[0]) && designer.Tracked[0] is circle ||
+                        designer.RelationSanitizer.AdjacentEnabled(designer.Tracked[1]) && designer.Tracked[1] is circle)
                     AdjacentCircleButton.Enabled = true;
             }
         }
@@ -271,6 +286,13 @@ namespace lab01
             p.Register();
 
             designer.Canvas.Reprint();
+        }
+
+        private void DeleteRelationsButtonMouseClick(object sender, MouseEventArgs e)
+        {
+            drawable d = designer.Tracked[0];
+            designer.RelationSanitizer.Delete(d);
+            this.UpdateButtons();
         }
     }
 }

@@ -9,11 +9,47 @@ namespace lab01
     {
         private List<line> _Drawables;
 
+        private HashSet<drawable> _AllDrawables;
+        private List<drawable> ListDrawables;
+        public HashSet<drawable> AllDrawables => this._AllDrawables;
+
+        private void PrintAll()
+        {
+            foreach (var d in this.AllDrawables)
+            {
+                Brush b = embellisher.VertexBrush;
+
+                if (d is line)
+                    b = embellisher.DrawColor;
+
+                d.Print(designer.Canvas.PrintToPreview, b);
+            }
+
+            if (this.AllDrawables.Count > 0) printer.Erase();
+        }
+
         public EqualLenghts(List<line> _Drawables)
         {
             this._Drawables = _Drawables;
 
             line ln = this._Drawables[1];
+
+            this._AllDrawables = new HashSet<drawable>();
+            this.ListDrawables = new List<drawable>();
+            foreach (line l in this._Drawables)
+            {
+                foreach (var v in l.Vertices)
+                {
+                    this._AllDrawables.Add(v);
+                    this.ListDrawables.Add(v);
+                    foreach (var d in v.AdjacentLines)
+                        if (!this._AllDrawables.Contains(d))
+                        {
+                            this._AllDrawables.Add(d);
+                            this.ListDrawables.Add(d);
+                        }
+                }
+            }
 
             if (ln.Length != this._Drawables[0].Length)
             {
@@ -25,26 +61,60 @@ namespace lab01
 
         public override List<(drawable, Brush)> GetHighlights()
         {
-            return new List<(drawable, Brush)> (this._Drawables.ConvertAll((line l) =>  ((drawable)l, embellisher.DrawColor)));
+            return new List<(drawable, Brush)> (this._Drawables.ConvertAll((line l) =>  ((drawable)l, embellisher.EqualLengthBrush)));
         }
 
         public override List<((string, Point), Brush)> GetStrings()
         {
-            //Point midpoint = Functors.Midpoint(this._Drawable.Vertices[0].Center, new Point(this._Drawable.Vertices[0].Center.X + this._Drawable.Radius, this._Drawable.Vertices[0].Center.Y));
+            List<((string, Point), Brush)> temp = new List<((string, Point), Brush)>();
+            
+            foreach (var l in this._Drawables)
+            {
+                Point midpoint = Functors.Midpoint(l.Start, l.End);
+                temp.Add((("EQ", midpoint), embellisher.StringBrush));
+            }
 
-            //return new List<((string, Point), Brush)> { (("fixed radius", midpoint), embellisher.FixedLengthHighlightBrush) };
-            return new List<((string, Point), Brush)>();
+            return temp;
+        }
+
+        public override bool ParallelEnabled(drawable d)
+        {
+            if (d is line && this._Drawables.Contains((line)d))
+                return false;
+
+            return true;
+        }
+        public override bool EqualEnabled(drawable d)
+        {
+            if (d is line && this._Drawables.Contains((line)d))
+                return false;
+
+            return true;
+        }
+        public override bool FixedLengthEnabled(drawable d)
+        {
+            if (d is line && this._Drawables.Contains((line)d))
+                return false;
+
+            return true;
         }
 
         public override void Sanitize(drawable d, ref Point distance, MovingOpts mo)
         {
             if (mo.Stop) return;
-            if (this._Break.Contains(d)) return;
+            if (!this.IsBoundWith(d)) return;
 
             foreach (var l in this._Drawables)
-                if (l.MovingSimultaneously) return;
+                if (l.MovingSimultaneously)
+                {
+                    if (d is line)
+                        if (!((line)l).PolyMoving)
+                            this.PrintAll();
 
-            this.StackOverflowControl(() => d.RespondToRelation(this), d);
+                    return;
+                }
+
+            d.RespondToRelation(this);
         }
 
         public override void SanitizeLine(line l)
@@ -52,15 +122,18 @@ namespace lab01
             //if ()
         }
 
-        public override void SanitizeVertex(vertex v)
+        public override void SanitizeVertex(vertex v, int nx = 0, int ny = 0)
         {
+            if (this._Break.Contains(v)) return;
+            
             line ln = this.GetAffectedLine(v);
             if (ln == null) return;
 
-            this.StackOverflowControl((() => ln.Rescale(this.GetNext(ln).Length)), ln.Vertices.ConvertAll(((vertex v) => (drawable)v)));
+            this.StackOverflowControl((() => ln.Rescale(this.GetNext(ln).Length)), this.ListDrawables);
+            this.PrintAll();
         }
 
-        public override bool IsBoundWith(drawable d) => d is line && this._Drawables.Contains((line)d);
+        public override bool IsBoundWith(drawable d) => this._AllDrawables.Contains(d);
 
         private line GetNext(line l)
         {
@@ -85,17 +158,29 @@ namespace lab01
 
         public override void PreMove(vertex v, MovingOpts mo) 
         {
-            line l = this.GetAffectedLine(v);
-            if (l == null) return;
+            if (this._Break.Contains(v)) return;
+            if (!this.IsBoundWith(v)) return;
 
-            if (this.GetNext(l).MovingSimultaneously) return;
             mo.Solo = false;
-            l.PreMove(mo);
-            //foreach (var d in this.GetAffectedLine(v)) /* d.PreMove(mo);*/
-            //{
-            //    if (this.) break;
-            //    mo.Solo = false;
-            //    d.PreMove(mo);
+
+            this.StackOverflowControl(() =>
+            {
+                foreach (var line in this._Drawables)
+                    line.PreMove(mo);
+            }, this.ListDrawables);
+
+            //line l = this.GetAffectedLine(v);
+            //if (l == null) return;
+
+            //if (this.GetNext(l).MovingSimultaneously) return;
+            ////this.GetNext(l).GetNext(v).PreMove(mo);
+            //mo.Solo = false;
+            //this.StackOverflowControl(() => l.PreMove(mo), v);
+            ////foreach (var d in this.GetAffectedLine(v)) /* d.PreMove(mo);*/
+            ////{
+            ////    if (this.) break;
+            ////    mo.Solo = false;
+            ////    d.PreMove(mo);
             //    /*mo.Solo = false;
             //    d.PreMove(mo);
             //    mo.Solo = false;
@@ -104,20 +189,30 @@ namespace lab01
         }
         public override void PostMove(vertex v, MovingOpts mo) 
         {
-            line l = this.GetAffectedLine(v);
-            if (l == null) return;
+            if (this._Break.Contains(v)) return;
+            if (!this.IsBoundWith(v)) return;
 
-            if (this.GetNext(l).MovingSimultaneously) return;
-            l.PostMove(mo);
-            //foreach (var d in this.GetAffectedDrawables(v))
-            //{
-            //    if (d.MovingSimultaneously) break;
-            //    d.PostMove(mo);
-            //    /*mo.Solo = false;
-            //    d.PostMove(mo);
-            //    mo.Solo = false;
-            //    d.Vertices[1].PostMove(mo);*/
-            //}
+            this.StackOverflowControl(() =>
+            {
+                foreach (var line in this._Drawables)
+                    line.PostMove(mo);
+            }, this.ListDrawables);
+
+            //line l = this.GetAffectedLine(v);
+            //if (l == null) return;
+
+            //if (this.GetNext(l).MovingSimultaneously) return;
+            ////this.GetNext(l).GetNext(v).PostMove(mo);
+            //this.StackOverflowControl(() => l.PostMove(mo), v);
+            ////foreach (var d in this.GetAffectedDrawables(v))
+            ////{
+            ////    if (d.MovingSimultaneously) break;
+            ////    d.PostMove(mo);
+            ////    /*mo.Solo = false;
+            ////    d.PostMove(mo);
+            ////    mo.Solo = false;
+            ////    d.Vertices[1].PostMove(mo);*/
+            ////}
         }
     }
 }

@@ -8,8 +8,6 @@ namespace lab01
 {
     public static partial class designer
     {
-        
-
         public static void DrawPoly(MouseEventArgs e, mainForm f)
         {
             // rysowanie linii, łamanych oraz wielokątów
@@ -27,7 +25,7 @@ namespace lab01
             else
             {
                 // ostatni punkt
-                if (designer._Lines.Count > 0 && 
+                if (designer._Lines.Count > 1 &&
                     designer.Distance(e.Location, designer.FirstPoint) <= printer.VertexRadius)
                 {
                     designer._State = PrintingStates.Off;
@@ -46,7 +44,7 @@ namespace lab01
 
                     poly p = new poly(designer._Lines, designer._Vertices);
                     foreach (var _line in designer._Lines)
-                        ((line) _line).Poly = p;
+                        ((line)_line).Poly = p;
 
                     designer._Lines = new List<drawable>();
                     designer._Vertices = new List<vertex>();
@@ -56,6 +54,12 @@ namespace lab01
                     designer._Canvas.ErasePreview();
 
                     f.DM = DesignModes.Off;
+                }
+                else if (designer._Lines.Count <= 1 &&
+                         designer.Distance(e.Location, designer.FirstPoint) <= printer.VertexRadius)
+                {
+                    printer.Erase();
+                    return;
                 }
                 else
                 {

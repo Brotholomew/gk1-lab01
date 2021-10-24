@@ -37,12 +37,13 @@ namespace lab01
             this.AddVertexButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.AdjacentCircleButton = new System.Windows.Forms.Button();
             this.ParallelButton = new System.Windows.Forms.Button();
             this.EqualLengthsButton = new System.Windows.Forms.Button();
             this.FixedCenterButton = new System.Windows.Forms.Button();
             this.FixedRadiusButton = new System.Windows.Forms.Button();
             this.FixedLengthButton = new System.Windows.Forms.Button();
-            this.AdjacentCircleButton = new System.Windows.Forms.Button();
+            this.DeleteRelationsButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -71,7 +72,7 @@ namespace lab01
             this.ButtonPolyDraw.Name = "ButtonPolyDraw";
             this.ButtonPolyDraw.Size = new System.Drawing.Size(182, 30);
             this.ButtonPolyDraw.TabIndex = 1;
-            this.ButtonPolyDraw.Text = "Poly / Line";
+            this.ButtonPolyDraw.Text = "Poly";
             this.ButtonPolyDraw.UseVisualStyleBackColor = true;
             this.ButtonPolyDraw.Click += new System.EventHandler(this.clickButtonLineDraw);
             // 
@@ -137,10 +138,20 @@ namespace lab01
             this.groupBox3.Controls.Add(this.FixedLengthButton);
             this.groupBox3.Location = new System.Drawing.Point(707, 227);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(200, 287);
+            this.groupBox3.Size = new System.Drawing.Size(200, 281);
             this.groupBox3.TabIndex = 4;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Relations";
+            // 
+            // AdjacentCircleButton
+            // 
+            this.AdjacentCircleButton.Location = new System.Drawing.Point(7, 232);
+            this.AdjacentCircleButton.Name = "AdjacentCircleButton";
+            this.AdjacentCircleButton.Size = new System.Drawing.Size(186, 39);
+            this.AdjacentCircleButton.TabIndex = 5;
+            this.AdjacentCircleButton.Text = "Adjacent circle";
+            this.AdjacentCircleButton.UseVisualStyleBackColor = true;
+            this.AdjacentCircleButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseClickAdjacentCircleButton);
             // 
             // ParallelButton
             // 
@@ -148,7 +159,7 @@ namespace lab01
             this.ParallelButton.Name = "ParallelButton";
             this.ParallelButton.Size = new System.Drawing.Size(186, 38);
             this.ParallelButton.TabIndex = 4;
-            this.ParallelButton.Text = "parallel edges";
+            this.ParallelButton.Text = "Parallel edges";
             this.ParallelButton.UseVisualStyleBackColor = true;
             this.ParallelButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MoouseClickParallelEdges);
             // 
@@ -158,7 +169,7 @@ namespace lab01
             this.EqualLengthsButton.Name = "EqualLengthsButton";
             this.EqualLengthsButton.Size = new System.Drawing.Size(186, 37);
             this.EqualLengthsButton.TabIndex = 3;
-            this.EqualLengthsButton.Text = "equal lengths";
+            this.EqualLengthsButton.Text = "Equal lengths";
             this.EqualLengthsButton.UseVisualStyleBackColor = true;
             this.EqualLengthsButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseClickEqualLengthsButton);
             // 
@@ -168,7 +179,7 @@ namespace lab01
             this.FixedCenterButton.Name = "FixedCenterButton";
             this.FixedCenterButton.Size = new System.Drawing.Size(186, 33);
             this.FixedCenterButton.TabIndex = 2;
-            this.FixedCenterButton.Text = "fixed center";
+            this.FixedCenterButton.Text = "Fixed center";
             this.FixedCenterButton.UseVisualStyleBackColor = true;
             this.FixedCenterButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseClickFixedCenterButton);
             // 
@@ -178,7 +189,7 @@ namespace lab01
             this.FixedRadiusButton.Name = "FixedRadiusButton";
             this.FixedRadiusButton.Size = new System.Drawing.Size(186, 35);
             this.FixedRadiusButton.TabIndex = 1;
-            this.FixedRadiusButton.Text = "fixed radius";
+            this.FixedRadiusButton.Text = "Fixed radius";
             this.FixedRadiusButton.UseVisualStyleBackColor = true;
             this.FixedRadiusButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseClickFixedRadiusButton);
             // 
@@ -188,25 +199,26 @@ namespace lab01
             this.FixedLengthButton.Name = "FixedLengthButton";
             this.FixedLengthButton.Size = new System.Drawing.Size(186, 32);
             this.FixedLengthButton.TabIndex = 0;
-            this.FixedLengthButton.Text = "fixed length";
+            this.FixedLengthButton.Text = "Fixed length";
             this.FixedLengthButton.UseVisualStyleBackColor = true;
             this.FixedLengthButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseClickFixedLengthButton);
             // 
-            // AdjacentCircleButton
+            // DeleteRelationsButton
             // 
-            this.AdjacentCircleButton.Location = new System.Drawing.Point(7, 232);
-            this.AdjacentCircleButton.Name = "AdjacentCircleButton";
-            this.AdjacentCircleButton.Size = new System.Drawing.Size(186, 39);
-            this.AdjacentCircleButton.TabIndex = 5;
-            this.AdjacentCircleButton.Text = "adjacent circle";
-            this.AdjacentCircleButton.UseVisualStyleBackColor = true;
-            this.AdjacentCircleButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseClickAdjacentCircleButton);
+            this.DeleteRelationsButton.Location = new System.Drawing.Point(714, 515);
+            this.DeleteRelationsButton.Name = "DeleteRelationsButton";
+            this.DeleteRelationsButton.Size = new System.Drawing.Size(186, 36);
+            this.DeleteRelationsButton.TabIndex = 5;
+            this.DeleteRelationsButton.Text = "Delete relations";
+            this.DeleteRelationsButton.UseVisualStyleBackColor = true;
+            this.DeleteRelationsButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DeleteRelationsButtonMouseClick);
             // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(920, 563);
+            this.Controls.Add(this.DeleteRelationsButton);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -237,6 +249,7 @@ namespace lab01
         private System.Windows.Forms.Button EqualLengthsButton;
         private System.Windows.Forms.Button ParallelButton;
         private System.Windows.Forms.Button AdjacentCircleButton;
+        private System.Windows.Forms.Button DeleteRelationsButton;
     }
 }
 

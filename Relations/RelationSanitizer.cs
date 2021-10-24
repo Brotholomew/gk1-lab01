@@ -56,5 +56,65 @@ namespace lab01
                 this._Relations.RemoveAll((Relation rel) => rel.IsBoundWith(v));
 
         }
+
+        public bool HasRelations(drawable d)
+        {
+            foreach (var rel in this._Relations)
+                if (rel.IsBoundWith(d)) return true;
+
+            return false;
+        }
+
+
+        public override bool FixedRadiusEnabled(drawable d)
+        {
+            foreach (var rel in this._Relations)
+                if (!rel.FixedRadiusEnabled(d))
+                    return false;
+
+            return true;
+        }
+
+        public override bool FixedCenterEnabled(drawable d)
+        {
+            foreach (var rel in this._Relations)
+                if (!rel.FixedCenterEnabled(d))
+                    return false;
+
+            return true;
+        }
+
+        public override bool AdjacentEnabled(drawable d)
+        {
+            foreach (var rel in this._Relations)
+                if (!rel.AdjacentEnabled(d))
+                    return false;
+
+            return true;
+        }
+        public override bool ParallelEnabled(drawable d)
+        {
+            foreach (var rel in this._Relations)
+                if (!rel.ParallelEnabled(d))
+                    return false;
+
+            return true;
+        }
+        public override bool EqualEnabled(drawable d)
+        {
+            foreach (var rel in this._Relations)
+                if (!rel.EqualEnabled(d))
+                    return false;
+
+            return true;
+        }
+        public override bool FixedLengthEnabled(drawable d)
+        {
+            foreach (var rel in this._Relations)
+                if (!rel.FixedLengthEnabled(d))
+                    return false;
+
+            return true;
+        }
     }
 }

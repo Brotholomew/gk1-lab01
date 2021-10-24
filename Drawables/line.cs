@@ -97,7 +97,7 @@ namespace lab01
         public override void PostMove(MovingOpts mo)
         {
             foreach (var v in this._Vertices)
-                if (!mo.Stop) v.PostMove(mo);
+                v.PostMove(mo);
 
             //mo.Stop = true;
             designer.RelationSanitizer.PostMove(this, mo);
@@ -112,7 +112,7 @@ namespace lab01
 
             if (mo.Solo) this._MovingSimultaneously = true;
             foreach (var v in this._Vertices)
-                if (!mo.Stop) v.PreMove(mo);
+                v.PreMove(mo);
 
             //mo.Stop = true;
             designer.RelationSanitizer.PreMove(this, mo);
@@ -143,7 +143,7 @@ namespace lab01
             Point midpoint = Functors.Midpoint(this.Start, this.End);
             vertex v = designer.DrawVertex(midpoint, embellisher.VertexBrush);
 
-            this.Poly.AddVertex(this.Vertices[0], v);
+            this.Poly.AddVertex(this.Vertices[0], v, this.Vertices[1]);
 
             List<vertex> temp = new List<vertex>();
             foreach (var vx in this.Vertices)
@@ -167,7 +167,7 @@ namespace lab01
             this.Delete();
         }
 
-        public override void RespondToRelation(Relation rel)
+        public override void RespondToRelation(Relation rel, int nx = 0, int ny = 0)
         {
             rel.SanitizeLine(this);
         }

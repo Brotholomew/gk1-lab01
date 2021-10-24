@@ -139,6 +139,9 @@ namespace lab01
             this._PreviewGraphics.Clear(Color.Transparent);
             foreach (var t in designer.Highlighter.Highlights)
                 t.Item1.Highlight(this.PrintToPreview, t.Item2);
+
+            foreach (var t in designer.Highlighter.Strings)
+                printer.PrintString(t.Item1.Item1, t.Item1.Item2, t.Item2);
         }
 
         public void EraseMain() => this._MainGraphics.Clear(Color.White);

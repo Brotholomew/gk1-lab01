@@ -17,7 +17,7 @@ namespace lab01
         public virtual bool IsDummy => false;
 
         public abstract void Delete();
-        public abstract void RespondToRelation(Relation rel);
+        public abstract void RespondToRelation(Relation rel, int nx = 0, int ny = 0);
         public abstract void Move(MouseEventArgs e, Point distance, Relation sanitizer, MovingOpts mo);
         public virtual void PreMove(MovingOpts mo)
         {

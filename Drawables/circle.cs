@@ -31,8 +31,8 @@ namespace lab01
         public override void Highlight(Action<Action> how, Brush brush)
         {
             how(() => printer.PutFigure(this, brush));
-            this.Vertices[0].Highlight(how, brush);
-            base.Highlight(how, brush);
+            this.Vertices[0].Highlight(how, embellisher.VertexBrush);
+            base.Print(how, embellisher.DrawColor);
         }
 
         public override void Register()
@@ -88,7 +88,7 @@ namespace lab01
         public void Rescale(double newRadius)
         {
             Point p = new Point(-1, -1);
-            designer.RelationSanitizer.Sanitize(this, ref p, new MovingOpts());
+            designer.RelationSanitizer.Sanitize(this, ref p, new MovingOpts(_circleOpts: true));
             if (p.X == 0 && p.Y == 0) return;
 
             this.radius = (int)Math.Ceiling(newRadius);
@@ -119,7 +119,7 @@ namespace lab01
             printer.Erase();
         }
 
-        public override void RespondToRelation(Relation rel)
+        public override void RespondToRelation(Relation rel, int nx = 0, int ny = 0)
         {
             rel.SanitizeCricle(this);
         }

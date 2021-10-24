@@ -18,5 +18,10 @@ namespace lab01
                 return temp;
             }
         }
+
+        public List<((string, Point), Brush)> Strings
+        {
+            get => designer.RelationSanitizer.GetStrings();
+        }
     }
 }

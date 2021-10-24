@@ -54,10 +54,13 @@ namespace lab01
         public override void PostMove(MovingOpts mo)
         {
             foreach (var line in this._Drawables)
-                line.PostMove(new MovingOpts(_stop: true));
+                line.Register();
 
-            //mo.Stop = true;
-            designer.RelationSanitizer.PostMove(this, mo);
+            if (!mo.Stop)
+            {
+               // mo.Stop = true;
+                designer.RelationSanitizer.PostMove(this, mo);
+            }
 
             base.PostMove(mo);
         }
@@ -65,10 +68,13 @@ namespace lab01
         public override void PreMove(MovingOpts mo)
         {
             foreach (var line in this._Drawables)
-                line.PreMove(new MovingOpts(_stop: true));
+                line.DeregisterDrawable();
 
-            //mo.Stop = true;
-            designer.RelationSanitizer.PreMove(this, mo);            
+            if (!mo.Stop)
+            {
+                //mo.Stop = true;
+                designer.RelationSanitizer.PreMove(this, mo);
+            }
 
             base.PreMove(mo);
         }
@@ -172,9 +178,9 @@ namespace lab01
             return v;
         }
 
-        public override void RespondToRelation(Relation rel)
+        public override void RespondToRelation(Relation rel, int nx = 0, int ny = 0)
         {
-            rel.SanitizeVertex(this);
+            rel.SanitizeVertex(this, nx, ny);
         }
     }
 }

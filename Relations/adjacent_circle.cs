@@ -22,17 +22,27 @@ namespace lab01
             this._Circle.PostMove(new MovingOpts());
         }
 
-        //public override List<(drawable, Brush)> GetHighlights()
-        //{
-        //    return new List<(drawable, Brush)> { (this._Circle, embellisher.FixedLengthHighlightBrush) };
-        //}
+        private void PrintAll()
+        {
+            this._Circle.Print(designer.Canvas.PrintToPreview, embellisher.DrawColor);
+            this._Circle.Vertices[0].Print(designer.Canvas.PrintToPreview, embellisher.VertexBrush);
+            this._Line.Poly.Print(designer.Canvas.PrintToPreview, embellisher.DrawColor);
 
-        //public override List<((string, Point), Brush)> GetStrings()
-        //{
-        //    // Point midpoint = Functors.Midpoint(this._Drawable.Vertices[0].Center, new Point(this._Drawable.Vertices[0].Center.X + this._Drawable.Radius, this._Drawable.Vertices[0].Center.Y));
+            //printer.Erase();
+        }
 
-        //    return new List<((string, Point), Brush)> { (("fixed radius", midpoint), embellisher.FixedLengthHighlightBrush) };
-        //}
+        public override List<(drawable, Brush)> GetHighlights()
+        {
+            return new List<(drawable, Brush)> { (this._Circle, embellisher.FixedLengthHighlightBrush), (this._Line, embellisher.FixedLengthHighlightBrush) };
+        }
+
+        public override bool AdjacentEnabled(drawable d)
+        {
+            if (this.IsBoundWith(d))
+                return false;
+
+            return true;
+        }
 
         public override void Sanitize(drawable d, ref Point distance, MovingOpts mo)
         {
@@ -51,7 +61,7 @@ namespace lab01
 
         private void PreMove(drawable d)
         {
-            if (!this.IsBoundWith(d))
+            if (!this.IsBoundWith(d) && d != this._Line.Vertices[0] && d != this._Line.Vertices[1])
                 return;
 
             this._Circle.PreMove(new MovingOpts());
@@ -61,7 +71,7 @@ namespace lab01
 
         private void PostMove(drawable d)
         {
-            if (!this.IsBoundWith(d))
+            if (!this.IsBoundWith(d) && d != this._Line.Vertices[0] && d != this._Line.Vertices[1])
                 return;
 
             this._Circle.PostMove(new MovingOpts());
@@ -69,15 +79,15 @@ namespace lab01
             this._Line.PostMove(new MovingOpts());
         }
 
-        public override void PreMove(poly p, MovingOpts mo) { if (this._Break.Contains(p)) return; this.StackOverflowControl(() => this.PreMove(p), p); }
-        public override void PreMove(circle c, MovingOpts mo) { if (this._Break.Contains(c)) return; this.StackOverflowControl(() => this.PreMove(c), c); }
-        public override void PreMove(line l, MovingOpts mo) { if (this._Break.Contains(l)) return; this.StackOverflowControl(() => this.PreMove(l), l); }
-        public override void PreMove(vertex v, MovingOpts mo) { if (this._Break.Contains(v)) return; this.StackOverflowControl(() => this.PreMove(v), v); }
+        public override void PreMove(poly p, MovingOpts mo) { if (this._Break.Contains(p)) return; this.StackOverflowControl(() => this.PreMove(p), new List<drawable> { p, this._Circle, this._Line, this._Line.Poly }); }
+        public override void PreMove(circle c, MovingOpts mo) { if (this._Break.Contains(c)) return; this.StackOverflowControl(() => this.PreMove(c), new List<drawable> { c, this._Circle, this._Line, this._Line.Poly }); }
+        public override void PreMove(line l, MovingOpts mo) { if (this._Break.Contains(l)) return; this.StackOverflowControl(() => this.PreMove(l), new List<drawable> { l, this._Circle, this._Line, this._Line.Poly }); }
+        public override void PreMove(vertex v, MovingOpts mo) { if (this._Break.Contains(v)) return; this.StackOverflowControl(() => this.PreMove(v), new List<drawable> { v, this._Circle, this._Line, this._Line.Poly }); }
 
-        public override void PostMove(poly p, MovingOpts mo) { if (this._Break.Contains(p)) return; this.StackOverflowControl(() => this.PostMove(p), p); }
-        public override void PostMove(circle c, MovingOpts mo) { if (this._Break.Contains(c)) return; this.StackOverflowControl(() => this.PostMove(c), c); }
-        public override void PostMove(line l, MovingOpts mo) { if (this._Break.Contains(l)) return; this.StackOverflowControl(() => this.PostMove(l), l); }
-        public override void PostMove(vertex v, MovingOpts mo) { if (this._Break.Contains(v)) return; this.StackOverflowControl(() => this.PostMove(v), v); }
+        public override void PostMove(poly p, MovingOpts mo) { if (this._Break.Contains(p)) return; this.StackOverflowControl(() => this.PostMove(p), new List<drawable> { p, this._Circle, this._Line, this._Line.Poly }); }
+        public override void PostMove(circle c, MovingOpts mo) { if (this._Break.Contains(c)) return; this.StackOverflowControl(() => this.PostMove(c), new List<drawable> { c, this._Circle, this._Line, this._Line.Poly }); }
+        public override void PostMove(line l, MovingOpts mo) { if (this._Break.Contains(l)) return; this.StackOverflowControl(() => this.PostMove(l), new List<drawable> { l, this._Circle, this._Line, this._Line.Poly }); }
+        public override void PostMove(vertex v, MovingOpts mo) { if (this._Break.Contains(v)) return; this.StackOverflowControl(() => this.PostMove(v), new List<drawable> { v, this._Circle, this._Line, this._Line.Poly }); }
 
         public override bool IsBoundWith(drawable d) => d == this._Circle || d == this._Line || d == this._Line.Poly  || d == this._Circle.Vertices[0];
 
@@ -118,7 +128,10 @@ namespace lab01
 
                 // try to move circle
                 if (!mo.CircleVMoving && !mo.CircleOpts)
+                {
                     this.StackOverflowControl(() => this._Circle.Vertices[0].Move(null, Functors.Distance(target, center), designer.RelationSanitizer, new MovingOpts(_circleOpts: false)), this._Circle.Vertices[0]);
+                    this._Line.Poly.Print(designer.Canvas.PrintToPreview, embellisher.DrawColor);
+                }
 
                 // if circle has not moved, move the line
                 if (this._Circle.Vertices[0].Center == center)
@@ -128,6 +141,7 @@ namespace lab01
                     Point closerV = Functors.RealDistance(this._Line.Start, target) <= Functors.RealDistance(target, this._Line.End) ? this._Line.Start : this._Line.End;
 
                     this.StackOverflowControl(() => this._Line.Move(null, Functors.Distance(target, closerV), designer.RelationSanitizer, new MovingOpts(_solo : true)), this._Line);
+                    this.PrintAll();
                 }
             }
 
@@ -137,7 +151,10 @@ namespace lab01
             circleLine = new LineNormalEquation(new LineVariables(temp.A, center.Y - temp.A * center.X), center);
 
             if (!mo.CircleOpts && !mo.CircleVMoving)
-                this._Circle.Rescale(newRadius);
+            {
+                this.StackOverflowControl(() => this._Circle.Rescale(newRadius), this._Circle);
+                this._Line.Poly.Print(designer.Canvas.PrintToPreview, embellisher.DrawColor);
+            }
 
             if (this._Circle.Radius != Math.Ceiling(newRadius))
             {
@@ -150,10 +167,14 @@ namespace lab01
 
                 if (d0 >= d1) Functors.Swap<LineNormalEquation>(ref boundary0, ref boundary1);
 
+                circleLine = new LineNormalEquation(new LineVariables(a, center.Y - a * center.X), center);
                 Point target = LineNormalEquation.Intersection(boundary0, circleLine);
 
                 if (!mo.CircleVMoving && !mo.CircleOpts)
+                {
                     this.StackOverflowControl(() => this._Circle.Vertices[0].Move(null, Functors.Distance(target, center), designer.RelationSanitizer, new MovingOpts(_circleOpts: false)), this._Circle.Vertices[0]);
+                    this._Line.Poly.Print(designer.Canvas.PrintToPreview, embellisher.DrawColor);
+                }
 
                 // if circle has not moved, move the line
                 if (this._Circle.Vertices[0].Center == center)
@@ -172,10 +193,11 @@ namespace lab01
                     Point beginning = LineNormalEquation.Intersection(circleLine, temp);
 
                     this.StackOverflowControl(() => this._Line.Move(null, Functors.Distance(target, beginning), designer.RelationSanitizer, new MovingOpts(_solo : true)), this._Line);
+                    this.PrintAll();
                 }
             }
 
-            // this._Line.Poly.Reprint();
+            //this.PrintAll();
         }
     }
 }

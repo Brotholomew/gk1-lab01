@@ -26,6 +26,7 @@ namespace lab01
         public static readonly Brush EqualLengthBrush = Brushes.LawnGreen;
         public static readonly Brush AdjacentBrush = Brushes.CornflowerBlue;
         public static readonly Brush ParallelBrush = Brushes.Red;
+        public static readonly Brush StringBrush = Brushes.Red;
 
         public static Cursor SwitchCursor(Cursor current, Cursor switched = null) {
             if (current == embellisher.NormalCursor)
@@ -188,7 +189,10 @@ namespace lab01
         public double GetC(Point p)
         {
             if (double.IsInfinity(this._A))
-                return (-1) * p.X;
+                return p.X;
+
+            if (this._A == 0)
+                return this.C;
 
             return (-1) * (this._A * p.X + this._B * p.Y);
         }
@@ -198,7 +202,7 @@ namespace lab01
             if (double.IsInfinity(this._A))
                 return 0;
 
-            return (-1) * this._A;
+            return (-1) * 1 / this._A;
         }
 
         public static (LineNormalEquation, LineNormalEquation) GetMovedLine(double r, double A, double B, double C)
@@ -230,12 +234,27 @@ namespace lab01
 
         public static Point Intersection(LineNormalEquation L1, LineNormalEquation L2)
         {
+            if (double.IsInfinity(L1.A) && double.IsInfinity(L2.A) || L1.A == L2.A)
+                return new Point(int.MaxValue, int.MaxValue);
+
             LineVariables l1 = L1.GetSlopeEquation();
             LineVariables l2 = L2.GetSlopeEquation();
 
             int x = (int)((l2.b - l1.b) / (l1.a - l2.a));
             int y = (int)(l1.a * x + l1.b);
-            
+
+            if (double.IsInfinity(L1.A))
+                x = (int)L1.C * (-1);
+
+            if (double.IsInfinity(L2.A))
+                x = (int)L2.C * (-1);
+
+            if (L1.A == 0)
+                y = (int)L1.C;
+
+            if (L2.A == 0)
+                y = (int)L2.C;
+
             return new Point(x, y);
         }
     }

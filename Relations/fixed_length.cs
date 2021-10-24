@@ -13,7 +13,15 @@ namespace lab01
         public FixedLength(line d)
         {
             this._Drawable = d;
-            this._Length = Functors.RealDistance(d.Start, d.End);
+            popup p = new popup((int)d.Length, "length");
+            p.ShowDialog();
+            this._Length = p.Length;
+
+            d.PreMove(new MovingOpts());
+            d.Vertices[0].PreMove(new MovingOpts());
+            d.Vertices[0].RespondToRelation(this);
+            d.Vertices[0].PostMove(new MovingOpts());
+            d.PostMove(new MovingOpts());
         }
 
         public override List<(drawable, Brush)> GetHighlights()
@@ -24,24 +32,47 @@ namespace lab01
         public override List<((string, Point), Brush)> GetStrings()
         {
             Point midpoint = Functors.Midpoint(this._Drawable.Start, this._Drawable.End);
-            midpoint = new Point(midpoint.X, midpoint.Y + 5);
+            midpoint = new Point(midpoint.X + 5, midpoint.Y);
 
-            return new List<((string, Point), Brush)> { (("fixed length", midpoint), embellisher.FixedLengthHighlightBrush) };
+            return new List<((string, Point), Brush)> { (($"l = {this._Length}", midpoint), embellisher.StringBrush) };
+        }
+
+        public override bool ParallelEnabled(drawable d)
+        {
+            if (this.IsBoundWith(d))
+                return false;
+
+            return true;
+        }
+        public override bool EqualEnabled(drawable d)
+        {
+            if (this.IsBoundWith(d))
+                return false;
+
+            return true;
+        }
+        public override bool FixedLengthEnabled(drawable d)
+        {
+            if (this.IsBoundWith(d))
+                return false;
+
+            return true;
         }
 
         public override void Sanitize(drawable d, ref Point distance, MovingOpts mo)
         {
             // if (mo.Stop) return;
-            if (this._Break.Contains(d)) return;
+            //if (this._Break.Contains(d)) return;
 
             d.RespondToRelation(this);
         }
 
-        public override void SanitizeVertex(vertex v)
+        public override void SanitizeVertex(vertex v, int nx = 0, int ny = 0)
         {
+            if (this._Break.Contains(v)) return;
             if (!v.IsAdjacent(this._Drawable)) return;
             if (this._Drawable.MovingSimultaneously) return;
-            this.StackOverflowControl(() => this._Drawable.Rescale(this._Length, v), this._Drawable.GetNext(v));
+            this.StackOverflowControl(() => this._Drawable.Rescale(this._Length, v), new List<drawable> { v, this._Drawable.GetNext(v) });
 
             //vertex vx = this._Drawable.GetNext(v);
             //double newLength = Functors.RealDistance(vx.Center, v.Center);
@@ -80,8 +111,28 @@ namespace lab01
             return ret;
         }
 
-        public override void PreMove(vertex v, MovingOpts mo) { foreach (var vx in this.GetAffectedVertices(v)) vx.PreMove(mo); }
-        public override void PostMove(vertex v, MovingOpts mo) { foreach (var vx in this.GetAffectedVertices(v)) vx.PostMove(mo); }
+        public override void PreMove(vertex v, MovingOpts mo) 
+        {
+            if (this._Break.Contains(v))
+                return;
+
+            this.StackOverflowControl(() =>
+            {
+                foreach (var vx in this.GetAffectedVertices(v))
+                    vx.PreMove(mo);
+            }, v);
+        }
+        public override void PostMove(vertex v, MovingOpts mo)
+        {
+            if (this._Break.Contains(v))
+                return;
+
+            this.StackOverflowControl(() =>
+            {
+                foreach (var vx in this.GetAffectedVertices(v))
+                    vx.PostMove(mo);
+            }, v);
+        }
 
         public override bool IsBoundWith(drawable d) => d == this._Drawable;
     }

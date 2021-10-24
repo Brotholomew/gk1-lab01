@@ -25,10 +25,18 @@ namespace lab01
             }
         }
 
-        public void AddVertex(vertex pre, vertex v)
+        public void AddVertex(vertex pre, vertex v, vertex post)
         {
             int pre_idx = this.Vertices.FindLastIndex((vertex v) => v == pre);
-            this.Vertices.Insert(pre_idx, v);
+            int post_idx = this.Vertices.FindLastIndex((vertex v) => v == post);
+
+            if ((pre_idx == this.Vertices.Count && post_idx == 0) || (post_idx == this.Vertices.Count && pre_idx == 0))
+                this.Vertices.Add(v);
+            else
+            {
+                int bigger = pre_idx > post_idx ? pre_idx : post_idx;
+                this.Vertices.Insert(bigger, v);
+            }
         }
 
         public override void DeregisterDrawable()
@@ -46,7 +54,7 @@ namespace lab01
                 line.Print(how, brush);
 
             foreach (var vertex in this._Vertices)
-                vertex.Print(how, brush);
+                vertex.Print(how, embellisher.VertexBrush);
         }
 
         public override void Reprint(int nx = 0, int ny = 0)
@@ -132,7 +140,7 @@ namespace lab01
             printer.Erase();
         }
 
-        public override void RespondToRelation(Relation rel)
+        public override void RespondToRelation(Relation rel, int nx = 0, int ny = 0)
         {
             rel.SanitizePoly(this);
         }

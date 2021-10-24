@@ -14,7 +14,7 @@ namespace lab01
         public virtual void SanitizePoly(poly p) { }
         public virtual void SanitizeLine(line l) { }
         public virtual void SanitizeCricle(circle c) { }
-        public virtual void SanitizeVertex(vertex v) { }
+        public virtual void SanitizeVertex(vertex v, int nx = 0, int ny = 0) { }
 
         public virtual void PreMove(poly p, MovingOpts mo) { }
         public virtual void PreMove(line l, MovingOpts mo) { }
@@ -43,5 +43,12 @@ namespace lab01
         }
 
         public virtual bool IsBoundWith(drawable d) => false;
+
+        public virtual bool FixedRadiusEnabled(drawable d) => true;
+        public virtual bool FixedCenterEnabled(drawable d) => true;
+        public virtual bool AdjacentEnabled(drawable d) => true;
+        public virtual bool ParallelEnabled(drawable d) => true;
+        public virtual bool EqualEnabled(drawable d) => true;
+        public virtual bool FixedLengthEnabled(drawable d) => true;
     }
 }

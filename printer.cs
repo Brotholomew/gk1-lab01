@@ -9,6 +9,7 @@ namespace lab01
 {
     public static class printer
     {
+        private static readonly int DEBUG = 0;
         private static PictureBox CanvasWrapper;
         private static Graphics Canvas;
         private static List<Point> _Buffer;
@@ -50,7 +51,7 @@ namespace lab01
 
         public static void PutVertex(Point p, Brush brush)
         {
-            printer.Canvas.DrawString($"({p.X},{p.Y})", SystemFonts.DefaultFont, embellisher.DrawColor, new Point(p.X, p.Y + 10));
+            if (printer.DEBUG == 1) printer.Canvas.DrawString($"({p.X},{p.Y})", SystemFonts.DefaultFont, embellisher.DrawColor, new Point(p.X, p.Y + 10));
             printer.PutCircle(p, printer.VertexRadius, brush);
         }
 
@@ -77,6 +78,8 @@ namespace lab01
             printer.CanvasWrapper.Invalidate();
             printer.CanvasWrapper.Update();
         }
+
+        public static void PrintString(string str, Point p, Brush brush) => printer.Canvas.DrawString(str, SystemFonts.DefaultFont, brush, p);
 
         #region debug
 

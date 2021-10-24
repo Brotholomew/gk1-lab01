@@ -23,19 +23,43 @@ namespace lab01
 
         public override List<((string, Point), Brush)> GetStrings()
         {
-            Point midpoint = Functors.Midpoint(this._Drawable.Vertices[0].Center, new Point(this._Drawable.Vertices[0].Center.X + this._Drawable.Radius, this._Drawable.Vertices[0].Center.Y));
+            return new List<((string, Point), Brush)> { (($"C = ({this._Center.Center.X}, {this._Center.Center.Y})", new Point(this._Drawable.Vertices[0].Center.X + 10, this._Drawable.Vertices[0].Center.Y - 5)), embellisher.VertexBrush) };
+        }
 
-            return new List<((string, Point), Brush)> { (("fixed radius", midpoint), embellisher.FixedLengthHighlightBrush) };
+        public override bool FixedRadiusEnabled(drawable d)
+        {
+            if (this.IsBoundWith(d))
+                return false;
+
+            return true;
+        }
+        public override bool FixedCenterEnabled(drawable d)
+        {
+            if (this.IsBoundWith(d))
+                return false;
+
+            return true;
         }
 
         public override void Sanitize(drawable d, ref Point distance, MovingOpts mo)
         {
             if (mo.Stop) return;
+            if (!this.IsBoundWith(d)) return;
+            if (this._Break.Contains(d)) return;
             if (d is circle && !mo.CircleOpts) distance = new Point(0, 0);
 
-            d.RespondToRelation(this);
+            int nx = distance.X;
+            int ny = distance.Y;
+
+            this.StackOverflowControl(() => d.RespondToRelation(this, nx, ny), d);
         }
 
-        public override bool IsBoundWith(drawable d) => d == this._Drawable;
+        public override void SanitizeVertex(vertex v, int nx = 0, int ny = 0)
+        {
+            Point reduce = new Point((-1) * nx, (-1) * ny);
+            v.Move(null, reduce, designer.RelationSanitizer, new MovingOpts());
+        }
+
+        public override bool IsBoundWith(drawable d) => d == this._Drawable || d == this._Center;
     }
 }

@@ -22,19 +22,21 @@ namespace lab01
             this._Circle.PostMove(new MovingOpts());
         }
 
+        #region Prints and Highlights
+
         private void PrintAll()
         {
-            this._Circle.Print(designer.Canvas.PrintToPreview, embellisher.DrawColor);
-            this._Circle.Vertices[0].Print(designer.Canvas.PrintToPreview, embellisher.VertexBrush);
-            this._Line.Poly.Print(designer.Canvas.PrintToPreview, embellisher.DrawColor);
-
-            //printer.Erase();
+            this._Circle.Print(designer.Canvas.PrintToPreview, Embellisher.DrawColor);
+            this._Circle.Vertices[0].Print(designer.Canvas.PrintToPreview, Embellisher.VertexBrush);
+            this._Line.Poly.Print(designer.Canvas.PrintToPreview, Embellisher.DrawColor);
         }
 
         public override List<(drawable, Brush)> GetHighlights()
         {
-            return new List<(drawable, Brush)> { (this._Circle, embellisher.FixedLengthHighlightBrush), (this._Line, embellisher.FixedLengthHighlightBrush) };
+            return new List<(drawable, Brush)> { (this._Circle, Embellisher.FixedLengthHighlightBrush), (this._Line, Embellisher.FixedLengthHighlightBrush) };
         }
+
+        #endregion
 
         public override bool AdjacentEnabled(drawable d)
         {
@@ -50,14 +52,9 @@ namespace lab01
             if (!this.IsBoundWith(d)) return;
             if (this._Break.Contains(d)) return;
             this.StackOverflowControl(() => this.MoveDrawables(mo), new List<drawable> { d });
-
-            // d.RespondToRelation(this);
         }
 
-        //public override void SanitizePoly(poly p) => this.StackOverflowControl(() => this.MoveDrawables(), new List<drawable> { p, this._Line, this._Circle, this._Circle.Vertices[0] });
-        //public override void SanitizeCricle(circle c) => this.StackOverflowControl(() => this.MoveDrawables(), new List<drawable> { c, this._Line, this._Circle.Vertices[0] });
-        //public override void SanitizeLine(line l) => this.StackOverflowControl(() => this.MoveDrawables(), new List<drawable> { l, this._Circle, this._Circle.Vertices[0] });
-        //public override void SanitizeVertex(vertex v) => this.StackOverflowControl(() => this.MoveDrawables(), new List<drawable> { v, this._Circle, this._Line });
+        #region Moving
 
         private void PreMove(drawable d)
         {
@@ -88,6 +85,8 @@ namespace lab01
         public override void PostMove(circle c, MovingOpts mo) { if (this._Break.Contains(c)) return; this.StackOverflowControl(() => this.PostMove(c), new List<drawable> { c, this._Circle, this._Line, this._Line.Poly }); }
         public override void PostMove(line l, MovingOpts mo) { if (this._Break.Contains(l)) return; this.StackOverflowControl(() => this.PostMove(l), new List<drawable> { l, this._Circle, this._Line, this._Line.Poly }); }
         public override void PostMove(vertex v, MovingOpts mo) { if (this._Break.Contains(v)) return; this.StackOverflowControl(() => this.PostMove(v), new List<drawable> { v, this._Circle, this._Line, this._Line.Poly }); }
+
+        #endregion
 
         public override bool IsBoundWith(drawable d) => d == this._Circle || d == this._Line || d == this._Line.Poly  || d == this._Circle.Vertices[0];
 
@@ -130,7 +129,7 @@ namespace lab01
                 if (!mo.CircleVMoving && !mo.CircleOpts)
                 {
                     this.StackOverflowControl(() => this._Circle.Vertices[0].Move(null, Functors.Distance(target, center), designer.RelationSanitizer, new MovingOpts(_circleOpts: false)), this._Circle.Vertices[0]);
-                    this._Line.Poly.Print(designer.Canvas.PrintToPreview, embellisher.DrawColor);
+                    this._Line.Poly.Print(designer.Canvas.PrintToPreview, Embellisher.DrawColor);
                 }
 
                 // if circle has not moved, move the line
@@ -153,7 +152,7 @@ namespace lab01
             if (!mo.CircleOpts && !mo.CircleVMoving)
             {
                 this.StackOverflowControl(() => this._Circle.Rescale(newRadius), this._Circle);
-                this._Line.Poly.Print(designer.Canvas.PrintToPreview, embellisher.DrawColor);
+                this._Line.Poly.Print(designer.Canvas.PrintToPreview, Embellisher.DrawColor);
             }
 
             if (this._Circle.Radius != Math.Ceiling(newRadius))
@@ -173,7 +172,7 @@ namespace lab01
                 if (!mo.CircleVMoving && !mo.CircleOpts)
                 {
                     this.StackOverflowControl(() => this._Circle.Vertices[0].Move(null, Functors.Distance(target, center), designer.RelationSanitizer, new MovingOpts(_circleOpts: false)), this._Circle.Vertices[0]);
-                    this._Line.Poly.Print(designer.Canvas.PrintToPreview, embellisher.DrawColor);
+                    this._Line.Poly.Print(designer.Canvas.PrintToPreview, Embellisher.DrawColor);
                 }
 
                 // if circle has not moved, move the line
@@ -196,8 +195,6 @@ namespace lab01
                     this.PrintAll();
                 }
             }
-
-            //this.PrintAll();
         }
     }
 }

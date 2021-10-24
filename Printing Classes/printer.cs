@@ -51,7 +51,7 @@ namespace lab01
 
         public static void PutVertex(Point p, Brush brush)
         {
-            if (printer.DEBUG == 1) printer.Canvas.DrawString($"({p.X},{p.Y})", SystemFonts.DefaultFont, embellisher.DrawColor, new Point(p.X, p.Y + 10));
+            if (printer.DEBUG == 1) printer.Canvas.DrawString($"({p.X},{p.Y})", SystemFonts.DefaultFont, Embellisher.DrawColor, new Point(p.X, p.Y + 10));
             printer.PutCircle(p, printer.VertexRadius, brush);
         }
 

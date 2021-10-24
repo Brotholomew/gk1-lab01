@@ -13,21 +13,6 @@ namespace lab01
         private HashSet<drawable> AllDrawables => this._AllDrawables;
         private List<drawable> ListDrawables;
 
-        private void PrintAll()
-        {
-            foreach (var d in this.AllDrawables)
-            {
-                Brush b = embellisher.VertexBrush;
-
-                if (d is line)
-                    b = embellisher.DrawColor;
-
-                d.Print(designer.Canvas.PrintToPreview, b);
-            }
-
-            if (this.AllDrawables.Count > 0) printer.Erase();
-        }
-
         public ParallelEdges(List<line> _Drawables)
         {
             this._Drawables = _Drawables;
@@ -60,9 +45,11 @@ namespace lab01
             }
         }
 
+        #region Prints and Highlights
+
         public override List<(drawable, Brush)> GetHighlights()
         {
-            return new List<(drawable, Brush)>(this._Drawables.ConvertAll((line l) => ((drawable)l, embellisher.ParallelBrush)));
+            return new List<(drawable, Brush)>(this._Drawables.ConvertAll((line l) => ((drawable)l, Embellisher.ParallelBrush)));
         }
 
         public override List<((string, Point), Brush)> GetStrings()
@@ -72,11 +59,30 @@ namespace lab01
             foreach (var l in this._Drawables)
             {
                 Point midpoint = Functors.Midpoint(l.Start, l.End);
-                temp.Add((("P", midpoint), embellisher.StringBrush));
+                temp.Add((("P", midpoint), Embellisher.StringBrush));
             }
 
             return temp;
         }
+
+        private void PrintAll()
+        {
+            foreach (var d in this.AllDrawables)
+            {
+                Brush b = Embellisher.VertexBrush;
+
+                if (d is line)
+                    b = Embellisher.DrawColor;
+
+                d.Print(designer.Canvas.PrintToPreview, b);
+            }
+
+            if (this.AllDrawables.Count > 0) printer.Erase();
+        }
+
+        #endregion
+
+        #region Prohibit other Relations
 
         public override bool ParallelEnabled(drawable d)
         {
@@ -100,11 +106,14 @@ namespace lab01
             return true;
         }
 
+        #endregion
+
+        #region Sanitize
+
         public override void Sanitize(drawable d, ref Point distance, MovingOpts mo)
         {
             if (mo.Stop) return;
             if (!this.IsBoundWith(d)) return;
-            //if (this._Break.Contains(d)) return;
 
             foreach (var l in this._Drawables)
                 if (l.MovingSimultaneously)
@@ -115,17 +124,7 @@ namespace lab01
 
                     return;
                 }
-
-            //foreach (var l in this._Drawables)
-            //    if (l.PolyMoving) return;
-
-            //this.StackOverflowControl(() => d.RespondToRelation(this), this.AllDrawables());
             d.RespondToRelation(this);
-        }
-
-        public override void SanitizeLine(line l)
-        {
-            //if ()
         }
 
         public override void SanitizeVertex(vertex v, int nx = 0, int ny = 0)
@@ -141,9 +140,9 @@ namespace lab01
             }
 
             this.PrintAll();
-
-            //this.StackOverflowControl((() => ln.MakeParallel(this._Drawables[0], this._Length)), ln.Vertices[1]);
         }
+
+        #endregion
 
         public override bool IsBoundWith(drawable d) => this._AllDrawables.Contains(d);
 
@@ -171,6 +170,8 @@ namespace lab01
             return ret;
         }
 
+        #region Moving
+
         public override void PreMove(vertex v, MovingOpts mo)
         {
             if (this._Break.Contains(v)) return;
@@ -183,18 +184,8 @@ namespace lab01
                 foreach (var line in this._Drawables)
                     line.PreMove(mo);
             }, this.ListDrawables);
-
-            //this._Length = this._Drawables[0].Length;
-            //foreach (var d in this.GetAffectedDrawables(v)) /* d.PreMove(mo);*/
-            //{
-            //    //d.PreMove(mo);
-            //    if (this.GetNext((line)d).MovingSimultaneously) return;
-            //    // this.GetNext(((line)d)).GetNext(v).PreMove(mo);
-            //    mo.Solo = false;
-            //    this.StackOverflowControl(() => d.PreMove(mo), v);
-
-            //}
         }
+
         public override void PostMove(vertex v, MovingOpts mo)
         {
             if (this._Break.Contains(v)) return;
@@ -205,15 +196,8 @@ namespace lab01
                 foreach (var line in this._Drawables)
                     line.PostMove(mo);
             }, this.ListDrawables);
-
-            //foreach (var d in this.GetAffectedDrawables(v))
-            //{
-            //    //d.PostMove(mo);
-            //    if (this.GetNext((line)d).MovingSimultaneously) return; 
-            //    // this.GetNext(((line)d)).GetNext(v).PostMove(mo);
-            //    this.StackOverflowControl(() => d.PostMove(mo), v);
-
-            //}
         }
+
+        #endregion
     }
 }

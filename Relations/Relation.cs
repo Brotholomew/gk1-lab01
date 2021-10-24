@@ -11,10 +11,16 @@ namespace lab01
         public virtual List<(drawable, Brush)> GetHighlights() => new List<(drawable, Brush)>();
         public virtual List<((string, Point), Brush)> GetStrings() => new List<((string, Point), Brush)>();
 
+        #region Sanitize
+
         public virtual void SanitizePoly(poly p) { }
         public virtual void SanitizeLine(line l) { }
         public virtual void SanitizeCricle(circle c) { }
         public virtual void SanitizeVertex(vertex v, int nx = 0, int ny = 0) { }
+
+        #endregion
+
+        #region Moving
 
         public virtual void PreMove(poly p, MovingOpts mo) { }
         public virtual void PreMove(line l, MovingOpts mo) { }
@@ -24,6 +30,10 @@ namespace lab01
         public virtual void PostMove(line l, MovingOpts mo) { }
         public virtual void PostMove(circle c, MovingOpts mo) { }
         public virtual void PostMove(vertex v, MovingOpts mo) { }
+
+        #endregion
+
+        #region StackOverflow control
 
         protected List<drawable> _Break = new List<drawable>();
         protected void StackOverflowControl(Action a, drawable d)
@@ -42,7 +52,11 @@ namespace lab01
                 this._Break.Remove(_d);           
         }
 
+        #endregion
+
         public virtual bool IsBoundWith(drawable d) => false;
+
+        #region Prohibit other Relations
 
         public virtual bool FixedRadiusEnabled(drawable d) => true;
         public virtual bool FixedCenterEnabled(drawable d) => true;
@@ -50,5 +64,7 @@ namespace lab01
         public virtual bool ParallelEnabled(drawable d) => true;
         public virtual bool EqualEnabled(drawable d) => true;
         public virtual bool FixedLengthEnabled(drawable d) => true;
+
+        #endregion
     }
 }

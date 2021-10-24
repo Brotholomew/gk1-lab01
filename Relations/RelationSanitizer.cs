@@ -11,6 +11,8 @@ namespace lab01
 
         public void AddRelation(Relation r) => this._Relations.Add(r);
 
+        #region Prints and Highlights
+
         public override List<(drawable, Brush)> GetHighlights()
         {
             List<(drawable, Brush)> temp = new List<(drawable, Brush)>();
@@ -31,6 +33,8 @@ namespace lab01
             return temp;
         }
 
+        #endregion
+
         public override void Sanitize(drawable d, ref Point distance, MovingOpts mo)
         {
             if (mo.Stop) return;
@@ -38,6 +42,8 @@ namespace lab01
             foreach (var rel in this._Relations)
                 rel.Sanitize(d, ref distance, mo);
         }
+
+        #region Moving
 
         public override void PreMove(poly p, MovingOpts mo) { foreach (var rel in this._Relations) rel.PreMove(p, mo); }
         public override void PreMove(line l, MovingOpts mo) { foreach (var rel in this._Relations) rel.PreMove(l, mo);  }
@@ -47,6 +53,8 @@ namespace lab01
         public override void PostMove(line l, MovingOpts mo) { foreach (var rel in this._Relations) rel.PostMove(l, mo); }
         public override void PostMove(circle c, MovingOpts mo) { foreach (var rel in this._Relations) rel.PostMove(c, mo); }
         public override void PostMove(vertex v, MovingOpts mo) { foreach (var rel in this._Relations) rel.PostMove(v, mo); }
+
+        #endregion
 
         public void Delete(drawable d)
         {
@@ -65,6 +73,7 @@ namespace lab01
             return false;
         }
 
+        #region Prohibit other Relations
 
         public override bool FixedRadiusEnabled(drawable d)
         {
@@ -92,6 +101,7 @@ namespace lab01
 
             return true;
         }
+
         public override bool ParallelEnabled(drawable d)
         {
             foreach (var rel in this._Relations)
@@ -100,6 +110,7 @@ namespace lab01
 
             return true;
         }
+
         public override bool EqualEnabled(drawable d)
         {
             foreach (var rel in this._Relations)
@@ -108,6 +119,7 @@ namespace lab01
 
             return true;
         }
+
         public override bool FixedLengthEnabled(drawable d)
         {
             foreach (var rel in this._Relations)
@@ -116,5 +128,7 @@ namespace lab01
 
             return true;
         }
+
+        #endregion
     }
 }

@@ -17,30 +17,32 @@ namespace lab01
         }
         public Point Center { get => this.p; }
         public List<drawable> AdjacentLines { get => this._Drawables; }
-        public void AddLine(line l) => AdjacentLines.Add(l);
-        public void Clear() => this._Drawables.Clear();
-
-        public override void DeregisterDrawable()
-        {
-            designer.Canvas.EraseVertex(this);
-        }
 
         public override void Print(Action<Action> how, Brush brush)
         {
             how(() => printer.PutVertex(this.Center, brush));
         }
 
+        #region Canvas Register and Deregister
+
         public override void Register() => designer.Canvas.RegisterVertex(this);
+
+        public override void DeregisterDrawable()
+        {
+            designer.Canvas.EraseVertex(this);
+        }
+
+        #endregion
+
+        #region Moving
 
         public override void Move(MouseEventArgs e, Point distance, Relation sanitizer, MovingOpts mo)
         {
-            // sanitizer.Sanitize(this, ref distance, mo);
-            
             this._Pixels.Clear();
            
             this.p = Functors.MovePoint(this.p, distance);
             this._Pixels.Add(this.p);
-            this.Print(designer.Canvas.PrintToPreview, embellisher.VertexBrush);
+            this.Print(designer.Canvas.PrintToPreview, Embellisher.VertexBrush);
 
             if (mo.Solo)
             {
@@ -56,12 +58,7 @@ namespace lab01
             foreach (var line in this._Drawables)
                 line.Register();
 
-            if (!mo.Stop)
-            {
-               // mo.Stop = true;
-                designer.RelationSanitizer.PostMove(this, mo);
-            }
-
+            designer.RelationSanitizer.PostMove(this, mo);
             base.PostMove(mo);
         }
 
@@ -70,14 +67,15 @@ namespace lab01
             foreach (var line in this._Drawables)
                 line.DeregisterDrawable();
 
-            if (!mo.Stop)
-            {
-                //mo.Stop = true;
-                designer.RelationSanitizer.PreMove(this, mo);
-            }
-
+            designer.RelationSanitizer.PreMove(this, mo);
             base.PreMove(mo);
         }
+
+        #endregion
+
+        public void AddLine(line l) => AdjacentLines.Add(l);
+
+        public void Clear() => this._Drawables.Clear();
 
         public override void Delete()
         {
@@ -106,7 +104,7 @@ namespace lab01
                 }
 
                 line l = null;
-                designer.Canvas.PrintToMain(() => l = designer.DrawLine(temp[0].Center, temp[1].Center, embellisher.DrawColor));
+                designer.Canvas.PrintToMain(() => l = designer.DrawLine(temp[0].Center, temp[1].Center, Embellisher.DrawColor));
                 designer.Canvas.RegisterDrawable(l);
 
                 foreach (var vx in temp)
@@ -149,7 +147,7 @@ namespace lab01
             Point p2 = v2.Pixels[0];
 
             Point midpoint = new Point((int)Math.Ceiling((p1.X + p2.X) / 2.0), (int)Math.Ceiling((p1.Y + p2.Y) / 2.0));
-            vertex v = designer.DrawVertex(midpoint, embellisher.VertexBrush);
+            vertex v = designer.DrawVertex(midpoint, Embellisher.VertexBrush);
 
             foreach (var vx in new List<vertex> { v1, v2 })
             {
@@ -157,7 +155,7 @@ namespace lab01
                 vertex n = ln.GetNext(vx);
 
                 line nl = null;
-                designer.Canvas.PrintToMain(() => nl = designer.DrawLine(n.Pixels[0], midpoint, embellisher.DrawColor));
+                designer.Canvas.PrintToMain(() => nl = designer.DrawLine(n.Pixels[0], midpoint, Embellisher.DrawColor));
                 designer.Canvas.RegisterDrawable(nl);
                 nl.Poly = ln.Poly;
                 nl.Vertices.Add(n);

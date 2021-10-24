@@ -23,17 +23,21 @@ namespace lab01
             c.PostMove(new MovingOpts());
         }
 
+        #region Prints and Highlights
+
         public override List<(drawable, Brush)> GetHighlights()
         {
-            return new List<(drawable, Brush)> { (this._Drawable, embellisher.FixedLengthHighlightBrush) };
+            return new List<(drawable, Brush)> { (this._Drawable, Embellisher.FixedLengthHighlightBrush) };
         }
 
         public override List<((string, Point), Brush)> GetStrings()
         {
-            //Point midpoint = Functors.Midpoint(this._Drawable.Vertices[0].Center, new Point(this._Drawable.Vertices[0].Center.X + this._Radius, this._Drawable.Vertices[0].Center.Y));
-
-            return new List<((string, Point), Brush)> { (($"r = {this._Radius}", new Point(this._Drawable.Vertices[0].Center.X + 10, this._Drawable.Vertices[0].Center.Y - 5)), embellisher.VertexBrush) };
+            return new List<((string, Point), Brush)> { (($"r = {this._Radius}", new Point(this._Drawable.Vertices[0].Center.X + 10, this._Drawable.Vertices[0].Center.Y - 5)), Embellisher.VertexBrush) };
         }
+
+        #endregion
+
+        #region Prohibit other Relations
 
         public override bool FixedRadiusEnabled(drawable d)
         {
@@ -49,6 +53,8 @@ namespace lab01
 
             return true;
         }
+
+        #endregion
 
         public override void Sanitize(drawable d, ref Point distance, MovingOpts mo)
         {

@@ -24,9 +24,11 @@ namespace lab01
             d.PostMove(new MovingOpts());
         }
 
+        #region Prints and Highlights
+
         public override List<(drawable, Brush)> GetHighlights()
         {
-            return new List<(drawable, Brush)> { (this._Drawable, embellisher.FixedLengthHighlightBrush) };
+            return new List<(drawable, Brush)> { (this._Drawable, Embellisher.FixedLengthHighlightBrush) };
         }
 
         public override List<((string, Point), Brush)> GetStrings()
@@ -34,8 +36,12 @@ namespace lab01
             Point midpoint = Functors.Midpoint(this._Drawable.Start, this._Drawable.End);
             midpoint = new Point(midpoint.X + 5, midpoint.Y);
 
-            return new List<((string, Point), Brush)> { (($"l = {this._Length}", midpoint), embellisher.StringBrush) };
+            return new List<((string, Point), Brush)> { (($"l = {this._Length}", midpoint), Embellisher.StringBrush) };
         }
+
+        #endregion
+
+        #region Prohibit other Relations
 
         public override bool ParallelEnabled(drawable d)
         {
@@ -59,11 +65,12 @@ namespace lab01
             return true;
         }
 
+        #endregion
+
+        #region Sanitize
+
         public override void Sanitize(drawable d, ref Point distance, MovingOpts mo)
         {
-            // if (mo.Stop) return;
-            //if (this._Break.Contains(d)) return;
-
             d.RespondToRelation(this);
         }
 
@@ -72,34 +79,11 @@ namespace lab01
             if (this._Break.Contains(v)) return;
             if (!v.IsAdjacent(this._Drawable)) return;
             if (this._Drawable.MovingSimultaneously) return;
+
             this.StackOverflowControl(() => this._Drawable.Rescale(this._Length, v), new List<drawable> { v, this._Drawable.GetNext(v) });
-
-            //vertex vx = this._Drawable.GetNext(v);
-            //double newLength = Functors.RealDistance(vx.Center, v.Center);
-
-            //Point d = Functors.Distance(vx.Center, v.Center);
-            //double scale = newLength / this._Length;
-
-            //Point np = new Point((int)(v.Center.X + d.X * scale), (int)(v.Center.Y + d.Y * scale));
-            //Point distance = Functors.Distance(vx.Center, np);
-
-            //if (distance.X != 0 || distance.Y != 0)
-            //{
-            //    // move the other vertex to match the fixed length
-            //    vx.Move(null, distance, designer.RelationSanitizer, new MovingOpts(_solo: true, _stop: true));
-            //}
         }
 
-        //public override void SanitizeLine(line l) 
-        //{
-        //    if (l == this._Drawable) return;
-        //    if (!l.IsAdjacent(this._Drawable)) return;
-
-        //    vertex v = l.CommonVertex(this._Drawable);
-        //    vertex vx = this._Drawable.GetNext(v);
-        //    v.RespondToRelation(this);
-        //    vx.RespondToRelation(this);
-        //}
+        #endregion
 
         private List<vertex> GetAffectedVertices(vertex v)
         {
@@ -110,6 +94,8 @@ namespace lab01
 
             return ret;
         }
+
+        #region Moving
 
         public override void PreMove(vertex v, MovingOpts mo) 
         {
@@ -133,6 +119,8 @@ namespace lab01
                     vx.PostMove(mo);
             }, v);
         }
+
+        #endregion
 
         public override bool IsBoundWith(drawable d) => d == this._Drawable;
     }

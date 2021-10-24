@@ -10,11 +10,10 @@ namespace lab01
     {
         public static void DrawPoly(MouseEventArgs e, mainForm f)
         {
-            // rysowanie linii, łamanych oraz wielokątów
             if (designer._State == PrintingStates.Off)
             {
-                // pierwszy punkt
-                vertex v = designer.DrawVertex(e.Location, embellisher.FirstVertexBrush);
+                // first point
+                vertex v = designer.DrawVertex(e.Location, Embellisher.FirstVertexBrush);
                 designer._Vertices.Add(v);
 
                 designer.LastPoint = new Point(e.Location.X, e.Location.Y);
@@ -24,10 +23,11 @@ namespace lab01
             }
             else
             {
-                // ostatni punkt
+                // next point
                 if (designer._Lines.Count > 1 &&
-                    designer.Distance(e.Location, designer.FirstPoint) <= printer.VertexRadius)
+                    Functors.RealDistance(e.Location, designer.FirstPoint) <= printer.VertexRadius)
                 {
+                    // last point
                     designer._State = PrintingStates.Off;
 
                     line l = null;
@@ -37,7 +37,7 @@ namespace lab01
                     l.AddVertex(designer._Vertices[0]);
 
                     designer._Lines.Add(l);
-                    designer._Vertices[0].Brush = embellisher.VertexBrush;
+                    designer._Vertices[0].Brush = Embellisher.VertexBrush;
                     designer._Vertices[designer._Vertices.Count - 1].AddLine(l);
                     designer._Vertices[0].AddLine(l);
                     designer._Canvas.PrintVertex(designer._Vertices[0]);
@@ -56,15 +56,16 @@ namespace lab01
                     f.DM = DesignModes.Off;
                 }
                 else if (designer._Lines.Count <= 1 &&
-                         designer.Distance(e.Location, designer.FirstPoint) <= printer.VertexRadius)
+                         Functors.RealDistance(e.Location, designer.FirstPoint) <= printer.VertexRadius)
                 {
+                    // do nothing when there are not enough lines to create a poly
                     printer.Erase();
                     return;
                 }
                 else
                 {
-                    // kolejny punkt
-                    vertex v = designer.DrawVertex(e.Location, embellisher.VertexBrush);
+                    // another point
+                    vertex v = designer.DrawVertex(e.Location, Embellisher.VertexBrush);
                     designer._Vertices.Add(v);
                     line l = null;
                     designer.Canvas.PrintToMain(() => l = designer.DrawLine(designer.LastPoint, e.Location, Brushes.Black));

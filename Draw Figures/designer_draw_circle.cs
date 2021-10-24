@@ -14,12 +14,13 @@ namespace lab01
         {
             if (designer._State == PrintingStates.Off) 
             {
+                // set circle center
                 designer.FirstVertex = designer.DrawVertex(p, Brushes.Black);
                 designer._State = PrintingStates.FollowMouse;
             } 
             else
             {
-                int radius = (int)designer.Distance(p, designer.FirstVertex.Pixels[0]);
+                int radius = (int)Functors.RealDistance(p, designer.FirstVertex.Pixels[0]);
                 designer._Canvas.ErasePreview();
 
                 if (!finish)
@@ -29,6 +30,7 @@ namespace lab01
                 }
                 else
                 {
+                    // on finish print to main bitmap
                     circle c = null;
                     designer._Canvas.PrintToMain(() => c = designer._DrawCircle(designer.FirstVertex, radius, Brushes.Black));
                     designer._Canvas.RegisterDrawable(c);
@@ -78,7 +80,7 @@ namespace lab01
                 printer.PutPixel(center.X + dx, center.Y - dy, b);
                 printer.PutPixel(center.X - dx, center.Y - dy, b);
                                                                
-                // zamieniamy osie                             
+                // swap axes X with Y                         
                 printer.PutPixel(center.X + dy, center.Y + dx, b);
                 printer.PutPixel(center.X - dy, center.Y + dx, b);
                 printer.PutPixel(center.X + dy, center.Y - dx, b);

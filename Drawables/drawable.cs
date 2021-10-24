@@ -16,15 +16,24 @@ namespace lab01
         public virtual Brush Brush { get; set; }
         public virtual bool IsDummy => false;
 
-        public abstract void Delete();
-        public abstract void RespondToRelation(Relation rel, int nx = 0, int ny = 0);
+        public drawable(List<Point> _pixels, List<vertex> _vertices, Brush _brush)
+        {
+            this._Pixels = _pixels;
+            this._Vertices = _vertices;
+            this.Brush = _brush;
+        }
+
+        #region Moving
+
         public abstract void Move(MouseEventArgs e, Point distance, Relation sanitizer, MovingOpts mo);
+
         public virtual void PreMove(MovingOpts mo)
         {
             this.DeregisterDrawable();
             designer.Canvas.Reprint();
             designer.Canvas.ErasePreview();
         }
+
         public virtual void PostMove(MovingOpts mo)
         {
             this.Register();
@@ -34,9 +43,9 @@ namespace lab01
             printer.Erase();
         }
 
-        public virtual bool OnCircleRim(MouseEventArgs e) => false;
+        #endregion
 
-        public virtual void Reprint(int nx = 0, int ny = 0) { }
+        #region Canvas Register and Deregister
 
         public virtual void Register() => designer.Canvas.RegisterDrawable(this);
 
@@ -45,6 +54,12 @@ namespace lab01
             designer.Canvas.EraseDrawable(this);
         }
 
+        #endregion
+
+        #region Reprints and Highlights
+
+        public virtual void Reprint(int nx = 0, int ny = 0) { }
+        
         public virtual void Print(Action<Action> how, Brush brush)
         {
             how(() => printer.PutPixels(this.Pixels, brush));
@@ -53,11 +68,10 @@ namespace lab01
 
         public virtual void Highlight(Action<Action> how, Brush brush) => this.Print(how, brush);
 
-        public drawable(List<Point> _pixels, List<vertex> _vertices, Brush _brush)
-        {
-            this._Pixels = _pixels;
-            this._Vertices = _vertices;
-            this.Brush = _brush;
-        }
+        #endregion
+
+        public virtual bool OnCircleRim(MouseEventArgs e) => false;
+        public abstract void Delete();
+        public abstract void RespondToRelation(Relation rel, int nx = 0, int ny = 0);
     }
 }

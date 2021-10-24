@@ -25,6 +25,11 @@ namespace lab01
             }
         }
 
+        public poly(List<drawable> _lines, List<vertex> _vertices) : base(null, _vertices, Brushes.Black)
+        {
+            this._Lines = _lines;
+        }
+
         public void AddVertex(vertex pre, vertex v, vertex post)
         {
             int pre_idx = this.Vertices.FindLastIndex((vertex v) => v == pre);
@@ -39,14 +44,7 @@ namespace lab01
             }
         }
 
-        public override void DeregisterDrawable()
-        {
-            foreach (var line in this._Lines)
-                line.DeregisterDrawable();
-
-            foreach (var vertex in this._Vertices)
-                vertex.DeregisterDrawable();
-        }
+        #region Reprints and Highlights
 
         public override void Print(Action<Action> how, Brush brush)
         {
@@ -54,47 +52,26 @@ namespace lab01
                 line.Print(how, brush);
 
             foreach (var vertex in this._Vertices)
-                vertex.Print(how, embellisher.VertexBrush);
+                vertex.Print(how, Embellisher.VertexBrush);
         }
 
         public override void Reprint(int nx = 0, int ny = 0)
         {
             foreach (var line in this._Lines)
-                line.Print(designer.Canvas.PrintToPreview, embellisher.DrawColor);
+                line.Print(designer.Canvas.PrintToPreview, Embellisher.DrawColor);
 
             foreach (var vertex in this._Vertices)
-                vertex.Print(designer.Canvas.PrintToPreview, embellisher.VertexBrush);
+                vertex.Print(designer.Canvas.PrintToPreview, Embellisher.VertexBrush);
         }
 
         public override void Highlight(Action<Action> how, Brush brush)
         {
             how(() => printer.PutFigure(this, brush));
-            //base.Highlight(how, brush);
         }
 
-        public override void PostMove(MovingOpts mo)
-        {
-            if (!mo.Stop)
-            {
-               // mo.Stop = true;
-                designer.RelationSanitizer.PostMove(this, mo);
-            }
+        #endregion
 
-            this.MovingSimultaneously = false;
-            base.PostMove(mo);
-        }
-
-        public override void PreMove(MovingOpts mo)
-        {
-            if (!mo.Stop)
-            {
-                //mo.Stop = true;
-                designer.RelationSanitizer.PreMove(this, mo);
-            }
-
-            this.MovingSimultaneously = true;
-            base.PreMove(mo);
-        }
+        #region Moving
 
         public override void Move(MouseEventArgs e, Point distance, Relation sanitizer, MovingOpts mo)
         {
@@ -107,8 +84,26 @@ namespace lab01
             foreach (var line in this._Lines)
                 line.Move(e, distance, sanitizer, mo);
 
-            this.Print(designer.Canvas.PrintToPreview, embellisher.DrawColor);
+            this.Print(designer.Canvas.PrintToPreview, Embellisher.DrawColor);
         }
+
+        public override void PostMove(MovingOpts mo)
+        {
+            designer.RelationSanitizer.PostMove(this, mo);
+            this.MovingSimultaneously = false;
+            base.PostMove(mo);
+        }
+
+        public override void PreMove(MovingOpts mo)
+        {
+            designer.RelationSanitizer.PreMove(this, mo);
+            this.MovingSimultaneously = true;
+            base.PreMove(mo);
+        }
+
+        #endregion
+
+        #region Canvas Register and Deregister
 
         public override void Register()
         {
@@ -119,10 +114,20 @@ namespace lab01
                 v.Register();
         }
 
-
-        public poly(List<drawable> _lines, List<vertex> _vertices) : base(null, _vertices, Brushes.Black)
+        public override void DeregisterDrawable()
         {
-            this._Lines = _lines;
+            foreach (var line in this._Lines)
+                line.DeregisterDrawable();
+
+            foreach (var vertex in this._Vertices)
+                vertex.DeregisterDrawable();
+        }
+
+        #endregion
+
+        public override void RespondToRelation(Relation rel, int nx = 0, int ny = 0)
+        {
+            rel.SanitizePoly(this);
         }
 
         public override void Delete()
@@ -138,11 +143,6 @@ namespace lab01
             designer.RelationSanitizer.Delete(this);
             designer.Canvas.Reprint();
             printer.Erase();
-        }
-
-        public override void RespondToRelation(Relation rel, int nx = 0, int ny = 0)
-        {
-            rel.SanitizePoly(this);
         }
     }
 }

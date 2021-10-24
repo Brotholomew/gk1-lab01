@@ -12,6 +12,10 @@ namespace lab01
         {
             int trackerRadius = printer.VertexRadius;
 
+            // recognize objects that are in a square of size trackerRadius x trackerRadius
+            // (mouse pointer is at the square's center), begin tracking from the nearest
+            // pixels to the mouse pointer
+
             for (int k = 0; k <= trackerRadius; k++)
             {
                 for (int i = -k; i <= k; i++)
@@ -31,19 +35,16 @@ namespace lab01
             return null;
         }
 
-        public static vertex TrackVertices(Point p)
-        {
-            return (vertex) designer.Tracker(p, designer._Canvas.VertexMap);
-        }
+        public static vertex TrackVertices(Point p) => (vertex) designer.Tracker(p, designer._Canvas.VertexMap);
 
-        public static drawable TrackDrawable(Point p)
-        {
-            return designer.Tracker(p, designer._Canvas.DrawableMap);
-        }
+        public static drawable TrackDrawable(Point p) => designer.Tracker(p, designer._Canvas.DrawableMap);
 
         public static drawable TrackFigure(Point p)
         {
             Dictionary<Point, List<drawable>> map = designer._Canvas.DrawableMap;
+
+            // search for lines from the mouse pointer location to the furthest allocated point
+            // to the right, if a line is found, determine whether the point is inside this line's poly
 
             for (int i = p.X; i <= designer.Canvas.FurthestX; i++)
             {
@@ -53,7 +54,7 @@ namespace lab01
                     drawable d = map[np][0];
 
                     if (d is circle)
-                        if (designer.Distance(((circle)d).Vertices[0].Pixels[0], p) < ((circle)d).Radius)
+                        if (Functors.RealDistance(((circle)d).Vertices[0].Pixels[0], p) < ((circle)d).Radius)
                             return d;
 
                     if (d is line)

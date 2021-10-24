@@ -59,10 +59,10 @@ namespace lab01
             this.canvas.Size = new System.Drawing.Size(688, 539);
             this.canvas.TabIndex = 0;
             this.canvas.TabStop = false;
-            this.canvas.Paint += new System.Windows.Forms.PaintEventHandler(this.canvas_Paint);
-            this.canvas.MouseClick += new System.Windows.Forms.MouseEventHandler(this.onMouseClickCanvas);
+            this.canvas.Paint += new System.Windows.Forms.PaintEventHandler(this.PaintCanvas);
+            this.canvas.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseClickCanvas);
             this.canvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MouseDownCanvas);
-            this.canvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mouseMoveCanvas);
+            this.canvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMoveCanvas);
             this.canvas.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MouseUpCanvas);
             // 
             // ButtonPolyDraw
@@ -74,7 +74,7 @@ namespace lab01
             this.ButtonPolyDraw.TabIndex = 1;
             this.ButtonPolyDraw.Text = "Poly";
             this.ButtonPolyDraw.UseVisualStyleBackColor = true;
-            this.ButtonPolyDraw.Click += new System.EventHandler(this.clickButtonLineDraw);
+            this.ButtonPolyDraw.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseClickButtonPolyDraw);
             // 
             // groupBox1
             // 
@@ -161,7 +161,7 @@ namespace lab01
             this.ParallelButton.TabIndex = 4;
             this.ParallelButton.Text = "Parallel edges";
             this.ParallelButton.UseVisualStyleBackColor = true;
-            this.ParallelButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MoouseClickParallelEdges);
+            this.ParallelButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseClickParallelEdges);
             // 
             // EqualLengthsButton
             // 
@@ -211,7 +211,7 @@ namespace lab01
             this.DeleteRelationsButton.TabIndex = 5;
             this.DeleteRelationsButton.Text = "Delete relations";
             this.DeleteRelationsButton.UseVisualStyleBackColor = true;
-            this.DeleteRelationsButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DeleteRelationsButtonMouseClick);
+            this.DeleteRelationsButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseClickDeleteRelationsButton);
             // 
             // mainForm
             // 

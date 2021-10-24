@@ -10,6 +10,9 @@ namespace lab01
         private circle _Circle;
         private line _Line;
 
+        private bool PostMoveCompleted = false;
+        private bool PreMoveCompleted = false;
+
         public AdjacentCircle(circle c, line l)
         {
             this._Circle = c;
@@ -48,7 +51,6 @@ namespace lab01
 
         public override void Sanitize(drawable d, ref Point distance, MovingOpts mo)
         {
-            if (mo.Stop) return;
             if (!this.IsBoundWith(d)) return;
             if (this._Break.Contains(d)) return;
             this.StackOverflowControl(() => this.MoveDrawables(mo), new List<drawable> { d });
@@ -61,9 +63,14 @@ namespace lab01
             if (!this.IsBoundWith(d) && d != this._Line.Vertices[0] && d != this._Line.Vertices[1])
                 return;
 
+            this.PostMoveCompleted = false;
+            if (this.PreMoveCompleted) return;
+
             this._Circle.PreMove(new MovingOpts());
-            this._Line.Poly.PreMove(new MovingOpts());
-            this._Line.PreMove(new MovingOpts());
+            this._Line.Poly.PreMove(new MovingOpts(_solo: false));
+            this._Line.PreMove(new MovingOpts(_solo: false));
+
+            this.PreMoveCompleted = true;
         }
 
         private void PostMove(drawable d)
@@ -71,9 +78,14 @@ namespace lab01
             if (!this.IsBoundWith(d) && d != this._Line.Vertices[0] && d != this._Line.Vertices[1])
                 return;
 
+            this.PreMoveCompleted = false;
+            if (this.PostMoveCompleted) return;
+
             this._Circle.PostMove(new MovingOpts());
             this._Line.Poly.PostMove(new MovingOpts());
             this._Line.PostMove(new MovingOpts());
+
+            this.PostMoveCompleted = true;
         }
 
         public override void PreMove(poly p, MovingOpts mo) { if (this._Break.Contains(p)) return; this.StackOverflowControl(() => this.PreMove(p), new List<drawable> { p, this._Circle, this._Line, this._Line.Poly }); }

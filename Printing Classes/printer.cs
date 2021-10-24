@@ -25,7 +25,6 @@ namespace lab01
         public static void Initialize(PictureBox _canvas)
         {
             printer.CanvasWrapper = _canvas;
-            // printer.Canvas = printer.CanvasWrapper.CreateGraphics();
 
             printer.Height = printer.CanvasWrapper.Height;
             printer.Width = printer.CanvasWrapper.Width;
@@ -34,6 +33,8 @@ namespace lab01
         }
 
         public static void SetGraphics(Graphics gx) => printer.Canvas = gx;
+
+        #region Put Pixel
 
         public static void PutPixel(Point p, Brush brush)
         {
@@ -48,6 +49,10 @@ namespace lab01
             foreach (var pixel in pixels)
                printer.PutPixel(pixel, brush);
         }
+
+        #endregion
+
+        #region Put Figures
 
         public static void PutVertex(Point p, Brush brush)
         {
@@ -64,7 +69,6 @@ namespace lab01
                 circle temp = (circle)d;
                 printer.PutCircle(temp.Vertices[0].Pixels[0], temp.Radius, brush);
                 printer.PutVertex(temp.Vertices[0].Pixels[0], temp.Vertices[0].Brush);
-                //printer.PutPixels(temp.Pixels, );
             }
             else if (d is poly)
             {
@@ -72,6 +76,8 @@ namespace lab01
                 printer.Canvas.FillPolygon(brush, temp.Vertices.ConvertAll((vertex v) => v.Pixels[0]).ToArray());
             }
         }
+
+        #endregion
 
         public static void Erase()
         {

@@ -37,7 +37,7 @@ namespace lab01
 
         public override void Sanitize(drawable d, ref Point distance, MovingOpts mo)
         {
-            if (mo.Stop) return;
+            // if (mo.Stop) return;
 
             foreach (var rel in this._Relations)
                 rel.Sanitize(d, ref distance, mo);

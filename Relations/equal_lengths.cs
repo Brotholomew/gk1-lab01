@@ -9,6 +9,9 @@ namespace lab01
     {
         private List<line> _Drawables;
 
+        private bool PreMoveCompleted = false;
+        private bool PostMoveCompleted = false;
+
         private HashSet<drawable> _AllDrawables;
         private List<drawable> ListDrawables;
         public HashSet<drawable> AllDrawables => this._AllDrawables;
@@ -48,7 +51,6 @@ namespace lab01
 
         public override void Sanitize(drawable d, ref Point distance, MovingOpts mo)
         {
-            if (mo.Stop) return;
             if (!this.IsBoundWith(d)) return;
 
             foreach (var l in this._Drawables)
@@ -120,7 +122,7 @@ namespace lab01
             line l = null;
 
             foreach (var ln in v.AdjacentLines)
-                if (this.IsBoundWith(ln)) l = (line)ln;
+                if (ln is line && this._Drawables.Contains((line)ln)) l = (line)ln;
 
             if (l == null) return l;
 
@@ -135,13 +137,7 @@ namespace lab01
             if (this._Break.Contains(v)) return;
             if (!this.IsBoundWith(v)) return;
 
-            mo.Solo = false;
-
-            this.StackOverflowControl(() =>
-            {
-                foreach (var line in this._Drawables)
-                    line.PreMove(mo);
-            }, this.ListDrawables);
+            this.PreMove();
         }
 
         public override void PostMove(vertex v, MovingOpts mo) 
@@ -149,11 +145,49 @@ namespace lab01
             if (this._Break.Contains(v)) return;
             if (!this.IsBoundWith(v)) return;
 
+            this.PostMove();
+        }
+
+        private void PostMove()
+        {
+            this.PreMoveCompleted = false;
+            if (this.PostMoveCompleted) return;
+
             this.StackOverflowControl(() =>
             {
                 foreach (var line in this._Drawables)
-                    line.PostMove(mo);
+                {
+                    foreach (var vx in line.Vertices)
+                    {
+                        vx.PostMove(new MovingOpts(_stop: true));
+                        foreach (var ln in vx.AdjacentLines)
+                            ln.PostMove(new MovingOpts(_stop: true, _solo: false));
+                    }
+                }
             }, this.ListDrawables);
+
+            this.PostMoveCompleted = true;
+        }
+
+        private void PreMove()
+        {
+            this.PostMoveCompleted = false;
+            if (this.PreMoveCompleted) return;
+
+            this.StackOverflowControl(() =>
+            {
+                foreach (var line in this._Drawables)
+                {
+                    foreach (var vx in line.Vertices)
+                    {
+                        vx.PreMove(new MovingOpts(_stop: true));
+                        foreach (var ln in vx.AdjacentLines)
+                            ln.PreMove(new MovingOpts(_stop: true, _solo: false));
+                    }
+                }
+            }, this.ListDrawables);
+
+            this.PreMoveCompleted = true;
         }
 
         #endregion
@@ -171,8 +205,6 @@ namespace lab01
 
                 d.Print(designer.Canvas.PrintToPreview, b);
             }
-
-            if (this.AllDrawables.Count > 0) printer.Erase();
         }
 
         public override List<(drawable, Brush)> GetHighlights()

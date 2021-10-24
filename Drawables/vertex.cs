@@ -55,8 +55,11 @@ namespace lab01
 
         public override void PostMove(MovingOpts mo)
         {
-            foreach (var line in this._Drawables)
-                line.Register();
+            if (!mo.Stop)
+            {
+                foreach (var line in this._Drawables)
+                    line.Register();
+            }
 
             designer.RelationSanitizer.PostMove(this, mo);
             base.PostMove(mo);
@@ -64,8 +67,11 @@ namespace lab01
 
         public override void PreMove(MovingOpts mo)
         {
-            foreach (var line in this._Drawables)
-                line.DeregisterDrawable();
+            if (!mo.Stop)
+            {
+                foreach (var line in this._Drawables)
+                    line.DeregisterDrawable();
+            }
 
             designer.RelationSanitizer.PreMove(this, mo);
             base.PreMove(mo);

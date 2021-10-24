@@ -268,7 +268,7 @@ namespace lab01
         private void MouseClickEqualLengthsButton(object sender, MouseEventArgs e)
         {
             designer.RelationSanitizer.AddRelation(new EqualLenghts(designer.Tracked.ConvertAll((drawable d) => (line)d)));
-            designer.Tracked.Clear();
+            designer.Tracked = new List<drawable>();
             this.UpdateButtons();
         }
 

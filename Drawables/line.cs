@@ -66,6 +66,15 @@ namespace lab01
 
         public override void PostMove(MovingOpts mo)
         {
+            if (mo.Stop)
+            {
+                designer.RelationSanitizer.PostMove(this, mo);
+
+                this._MovingSimultaneously = false;
+                base.PostMove(mo);
+                return;
+            }
+
             foreach (var v in this._Vertices)
                 v.PostMove(mo);
 
@@ -80,6 +89,14 @@ namespace lab01
             this._OldLength = this.Length;
 
             if (mo.Solo) this._MovingSimultaneously = true;
+
+            if (mo.Stop)
+            {
+                designer.RelationSanitizer.PreMove(this, mo);
+                base.PreMove(mo);
+                return;
+            }
+
             foreach (var v in this._Vertices)
                 v.PreMove(mo);
 

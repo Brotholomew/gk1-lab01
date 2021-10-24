@@ -97,7 +97,7 @@ namespace lab01
         public override void PreMove(MovingOpts mo)
         {
             designer.RelationSanitizer.PreMove(this, mo);
-            this.MovingSimultaneously = true;
+            if (mo.Solo) this.MovingSimultaneously = true;
             base.PreMove(mo);
         }
 

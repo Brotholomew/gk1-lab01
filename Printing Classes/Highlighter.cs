@@ -12,8 +12,8 @@ namespace lab01
             get
             {
                 List<(drawable, Brush)> temp = new List<(drawable, Brush)>();
-                temp.AddRange(designer.Tracked.ConvertAll((drawable d) => (d, Embellisher.SelectedColor)));
                 temp.AddRange(designer.RelationSanitizer.GetHighlights());
+                temp.AddRange(designer.Tracked.ConvertAll((drawable d) => (d, Embellisher.SelectedColor)));
 
                 return temp;
             }

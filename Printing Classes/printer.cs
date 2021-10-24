@@ -9,7 +9,7 @@ namespace lab01
 {
     public static class printer
     {
-        private static readonly int DEBUG = 0;
+        private static readonly int DEBUG = 1;
         private static PictureBox CanvasWrapper;
         private static Graphics Canvas;
         private static List<Point> _Buffer;

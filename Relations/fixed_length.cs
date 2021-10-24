@@ -24,6 +24,18 @@ namespace lab01
             d.PostMove(new MovingOpts());
         }
 
+        public FixedLength(line d, double len)
+        {
+            this._Drawable = d;
+            this._Length = len;
+
+            d.PreMove(new MovingOpts());
+            d.Vertices[0].PreMove(new MovingOpts());
+            d.Vertices[0].RespondToRelation(this);
+            d.Vertices[0].PostMove(new MovingOpts());
+            d.PostMove(new MovingOpts());
+        }
+
         #region Prints and Highlights
 
         public override List<(drawable, Brush)> GetHighlights()

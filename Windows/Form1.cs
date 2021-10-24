@@ -135,6 +135,7 @@ namespace lab01
 
         private void PutUpPredefinedScene()
         {
+            // Circle and triangle 1
             Point pc = new Point(450, 100);
             Point pp1 = new Point(450, 300);
             Point pp2 = new Point(500, 400);
@@ -165,6 +166,68 @@ namespace lab01
 
             c.Register();
             p.Register();
+
+            designer.RelationSanitizer.AddRelation(new FixedLength(l1, 111));
+
+            // Poly and circle 2
+            Point _p1 = new Point(145, 89);
+            Point _p2 = new Point(205, 82);
+            Point _p3 = new Point(360, 99);
+            Point _p4 = new Point(23, 170);
+            Point _p5 = new Point(147, 434);
+            Point _p6 = new Point(413, 280);
+            Point _p7 = new Point(184, 333);
+            Point _p8 = new Point(231, 208);
+
+            line _l1 = designer.DrawLine(_p1, _p2, Embellisher.DrawColor);
+            line _l2 = designer.DrawLine(_p2, _p3, Embellisher.DrawColor);
+            line _l3 = designer.DrawLine(_p3, _p4, Embellisher.DrawColor);
+            line _l4 = designer.DrawLine(_p4, _p5, Embellisher.DrawColor);
+            line _l5 = designer.DrawLine(_p5, _p6, Embellisher.DrawColor);
+            line _l6 = designer.DrawLine(_p6, _p7, Embellisher.DrawColor);
+            line _l7 = designer.DrawLine(_p7, _p1, Embellisher.DrawColor);
+
+            vertex _v1 = new vertex(_p1, new List<Point> { _p1 }, Embellisher.VertexBrush);
+            vertex _v2 = new vertex(_p2, new List<Point> { _p2 }, Embellisher.VertexBrush);
+            vertex _v3 = new vertex(_p3, new List<Point> { _p3 }, Embellisher.VertexBrush);
+            vertex _v4 = new vertex(_p4, new List<Point> { _p4 }, Embellisher.VertexBrush);
+            vertex _v5 = new vertex(_p5, new List<Point> { _p5 }, Embellisher.VertexBrush);
+            vertex _v6 = new vertex(_p6, new List<Point> { _p6 }, Embellisher.VertexBrush);
+            vertex _v7 = new vertex(_p7, new List<Point> { _p7 }, Embellisher.VertexBrush);
+            vertex _v8 = new vertex(_p8, new List<Point> { _p8 }, Embellisher.VertexBrush);
+
+            _l1.AddVertex(_v1); _l1.AddVertex(_v2);
+            _l2.AddVertex(_v2); _l2.AddVertex(_v3);
+            _l3.AddVertex(_v3); _l3.AddVertex(_v4);
+            _l4.AddVertex(_v4); _l4.AddVertex(_v5);
+            _l5.AddVertex(_v5); _l5.AddVertex(_v6);
+            _l6.AddVertex(_v6); _l6.AddVertex(_v7);
+            _l7.AddVertex(_v7); _l7.AddVertex(_v1);
+
+            _v1.AddLine(_l1); _v1.AddLine(_l7);
+            _v2.AddLine(_l1); _v2.AddLine(_l2);
+            _v3.AddLine(_l2); _v3.AddLine(_l3);
+            _v4.AddLine(_l3); _v4.AddLine(_l4);
+            _v5.AddLine(_l4); _v5.AddLine(_l5);
+            _v6.AddLine(_l5); _v6.AddLine(_l6);
+            _v7.AddLine(_l6); _v7.AddLine(_l7);
+
+            circle ci = designer._DrawCircle(_v8, 61, Embellisher.DrawColor);
+            poly po = new poly(new List<drawable> { _l1, _l2, _l3, _l4, _l5, _l6, _l7 }, new List<vertex> { _v1, _v2, _v3, _v4, _v5, _v6, _v7 });
+
+            _l1.Poly = po;
+            _l2.Poly = po;
+            _l3.Poly = po;
+            _l4.Poly = po;
+            _l5.Poly = po;
+            _l6.Poly = po;
+            _l7.Poly = po;
+            _v8.AdjacentLines.Add(ci);
+
+            ci.Register(); po.Register();
+
+            designer.RelationSanitizer.AddRelation(new EqualLenghts(new List<line> { _l3, _l5 }));
+            designer.RelationSanitizer.AddRelation(new AdjacentCircle(ci, _l7));
 
             designer.Canvas.Reprint();
         }
@@ -275,7 +338,7 @@ namespace lab01
         private void MouseClickParallelEdges(object sender, MouseEventArgs e)
         {
             designer.RelationSanitizer.AddRelation(new ParallelEdges(designer.Tracked.ConvertAll((drawable d) => (line)d)));
-            designer.Tracked.Clear();
+            designer.Tracked = new List<drawable>();
             this.UpdateButtons();
         }
 
